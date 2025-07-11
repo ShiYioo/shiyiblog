@@ -15,6 +15,7 @@ import {
 } from '@vuepress/plugin-reading-time/client'
 export default defineClientConfig({
   enhance({ app }) {
+    app.component('MusicPlayer', MusicPlayer)
     app.component('Live2DModel', Live2DModel)
     app.component('APlayer', APlayer)
   },
