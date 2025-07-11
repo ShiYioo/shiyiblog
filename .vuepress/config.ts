@@ -8,10 +8,10 @@ import { copyrightPlugin } from '@vuepress/plugin-copyright'
 export default defineUserConfig({
   head: [['link', { rel: 'icon', href: '/logo.jpg' }],
     // ['script', { src: '/live2d/index.js' }],
-    ['script', { src: 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js' }],
+    // ['script', { src: 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js' }],
     // ['script', { src: '/cursor-trail.css' }],
-    ['script', { src: '/cursor-trail.js' }],
-    ['script', { src: '/snow.js' }]
+    // ['script', { src: '/cursor-trail.js'}],
+    // ['script', { src: '/snow.js' }]
   ],
   plugins:[
     oml2dPlugin({

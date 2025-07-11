@@ -20,6 +20,16 @@ export default defineClientConfig({
     document.body.appendChild(sidebarContainer)
     createApp(h(ResponsiveSidebar)).mount(sidebarContainer)
 
+    if (typeof window !== 'undefined') {
+  import('./components/ClientScripts.vue').then(({ default: ClientScripts }) => {
+    const scriptContainer = document.createElement('div');
+    document.body.appendChild(scriptContainer);
+    createApp(h(ClientScripts)).mount(scriptContainer);
+  }).catch(err => {
+    console.error('Failed to load ClientScripts:', err);
+  });
+}
+
    if (typeof window !== 'undefined') {
       import('./components/Music-player.vue').then(({ default: MusicPlayer }) => {
         const musiccontainer = document.createElement('div')
