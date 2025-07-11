@@ -7,7 +7,6 @@
 <script setup>
 import { ref } from 'vue'
 import APlayer from 'vue3-aplayer'
-
 // 定义音乐对象
 const music = ref({
   title: 'オセロ',

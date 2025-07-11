@@ -21,7 +21,7 @@ export default defineClientConfig({
     createApp(h(ResponsiveSidebar)).mount(sidebarContainer)
 
    if (typeof window !== 'undefined') {
-      import('./components/music-player.vue').then(({ default: MusicPlayer }) => {
+      import('./components/Music-player.vue').then(({ default: MusicPlayer }) => {
         const musiccontainer = document.createElement('div')
         document.body.appendChild(musiccontainer)
         createApp(h(MusicPlayer)).mount(musiccontainer)
