@@ -46,7 +46,7 @@ export default defineUserConfig({
     logo: "/logo.jpg",
     author: "Shi Yi",
     authorAvatar: "/logo.jpg",
-    docsRepo: "https://github.com/2743305544",
+    docsRepo: "https://github.com/ShiYioo",
     docsBranch: "main",
     docsDir: "example",
     lastUpdatedText: "",
