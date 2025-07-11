@@ -1,0 +1,31 @@
+/* cursor-trail.css */
+.cursor-trail {
+  position: fixed;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.cursor-trail span {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #ff78c4, #6c73ff);
+  opacity: 0.8;
+  transform: scale(1);
+  animation: trailFade 1s ease-out forwards;
+  filter: blur(1px);
+}
+
+@keyframes trailFade {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
