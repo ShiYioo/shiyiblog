@@ -16,7 +16,7 @@ const music = ref({
 },{
     title: 'Zenith',
     artist: 'KARAKURI',
-    src: 'https://m801.music.126.net/20250711103617/a53832bfc50bf9880b32b36872d26aa1/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/24484332522/a2d8/8599/7c1b/0f2f002d013de690d02116be74f3bc04.mp3?vuutv=uzuzUi0gjJ/HDkEHiyUKSjn12xoRnV4dhtP0PrXWM+THTLqPTbFc0uGQQCMCZAzRdcyhPnEPqbdbbHTjOwN8S85bQ/RLg2ApSQ6mUt52E7w=', // 替换为实际音频文件路径
+    src: 'https://music.163.com/song/media/outer/url?id=2019092913.mp3', // 替换为实际音频文件路径
     pic: 'https://p3.music.126.net/wGqRIS6kYizTDXIn3tWsAA==/109951168277970190.jpg?param=300y300'  // 替换为实际封面图片路径
   },
 )
@@ -30,7 +30,7 @@ const list = [
 },{
     title: 'Zenith',
     artist: 'KARAKURI',
-    src: 'https://m801.music.126.net/20250711103617/a53832bfc50bf9880b32b36872d26aa1/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/24484332522/a2d8/8599/7c1b/0f2f002d013de690d02116be74f3bc04.mp3?vuutv=uzuzUi0gjJ/HDkEHiyUKSjn12xoRnV4dhtP0PrXWM+THTLqPTbFc0uGQQCMCZAzRdcyhPnEPqbdbbHTjOwN8S85bQ/RLg2ApSQ6mUt52E7w=', // 替换为实际音频文件路径
+    src: 'https://music.163.com/song/media/outer/url?id=2019092913.mp3', // 替换为实际音频文件路径
     pic: 'https://p3.music.126.net/wGqRIS6kYizTDXIn3tWsAA==/109951168277970190.jpg?param=300y300'  // 替换为实际封面图片路径
   },
 ]
