@@ -35,9 +35,21 @@ const onMouseMove = (e: MouseEvent) => {
 
 const onMouseUp = () => {
   isDragging.value = false
+  if (card.value) {
+    const x = card.value.style.left
+    const y = card.value.style.top
+    localStorage.setItem('readTimeCardPosition', JSON.stringify({ x, y }))
+  }
 }
 
 onMounted(() => {
+  const savedPos = localStorage.getItem('readTimeCardPosition')
+  if (savedPos && card.value) {
+    const { x, y } = JSON.parse(savedPos)
+    card.value.style.left = x
+    card.value.style.top = y
+  }
+
   window.addEventListener('mousemove', onMouseMove)
   window.addEventListener('mouseup', onMouseUp)
   if (card.value) {
