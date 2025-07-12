@@ -47,3 +47,23 @@
         </p>
     </section>
 </div>
+    <div style="display: flex; align-items: center; text-align: center; max-width: 2000px; justify-content: center;">
+        <div style="background-color: #fff0f5; border-left: 4px solid #e74c3c; padding: 10px 20px; font-family: 'Comic Sans MS', 'Noto Sans CJK', sans-serif; font-size: 1em; color: #8e44ad; margin: 1em 0; border-radius: 10px;">
+            “如果对我创作内容感兴趣或者对你有所帮助，希望可以投个赏～～”
+        </div>
+    </div>
+
+<div style="display: flex; gap: 20px; justify-content: center; margin: 20px auto; font-family: 'Comic Sans MS', 'Noto Sans CJK', sans-serif;">
+    <div style="flex: 1; max-width: 300px; border: 2px dashed #9b59b6; background: linear-gradient(to bottom, #fff, #f9f0ff); padding: 15px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;">
+        <h3 style="color: #9b59b6;">支付宝二维码</h3>
+        <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
+            <img src="/buy/zhifubaobuy.jpg" alt="支付宝二维码" style="width: 100%; max-width: 200px; height: auto; border-radius: 10px;">
+        </div>
+    </div>
+    <div style="flex: 1; max-width: 300px; border: 2px dashed #42b983; background: linear-gradient(to bottom, #fff, #ebfdf2); padding: 15px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;">
+        <h3 style="color: #42b983;">微信二维码</h3>
+        <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
+            <img src="/buy/weixinbuy.jpg" alt="微信二维码" style="width: 100%; max-width: 200px; height: auto; border-radius: 10px;">
+        </div>
+    </div>
+</div>
