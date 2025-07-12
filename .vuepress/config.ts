@@ -5,6 +5,7 @@ import { webpackBundler } from '@vuepress/bundler-webpack'
 import { oml2dPlugin } from 'vuepress-plugin-oh-my-live2d';
 import { readingTimePlugin } from '@vuepress/plugin-reading-time'
 import { copyrightPlugin } from '@vuepress/plugin-copyright'
+import { sitemapPlugin } from "@vuepress/plugin-sitemap";
 export default defineUserConfig({
   head: [['link', { rel: 'icon', href: '/logo.jpg' }],
     // ['script', { src: '/live2d/index.js' }],
@@ -35,7 +36,10 @@ export default defineUserConfig({
       license: 'CC BY-NC-SA 4.0',
       global: true,
       // triggerLength: 1,
-    })
+    }),
+    sitemapPlugin({
+      hostname: 'blog.shiyio.uk'
+    }),
   ],
   port: 8012,
   title: "Shi Yi の 小库",
@@ -75,6 +79,14 @@ export default defineUserConfig({
         ],
       },
     ],
+    algolia: {
+    appId: '9ebbabab-4b36-4711-ac94-f677bcf9b647',
+    apiKey: '0bd9f9ba1d74a028e9041408426f9b9c',
+    indexName: 'ShiYi Blog',
+    inputSelector: '### REPLACE ME ####',
+    algoliaOptions: { 'facetFilters': ["lang:$LANG"] },
+    debug: false // Set debug to true if you want to inspect the dropdown
+  },
     // bulletin: {
     //   body: [
     //     {
