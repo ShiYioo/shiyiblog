@@ -87,6 +87,16 @@ export default defineUserConfig({
     algoliaOptions: { 'facetFilters': ["lang:$LANG"] },
     debug: false // Set debug to true if you want to inspect the dropdown
   },
+  bulletin: {
+    body: [
+      {
+        type: "text",
+        content:
+          "关于音乐播放器的问题，目前PC端无法点击播放按钮进行播放，切换歌曲可以进行播放，如需关闭可以调低播放器的音量，手机端一切正常（懒得改）",
+        style: "font-size: 12px;",
+      },
+    ],
+  },
     // bulletin: {
     //   body: [
     //     {

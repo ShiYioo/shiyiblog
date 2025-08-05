@@ -1,6 +1,6 @@
 <template>
        <div style="position: fixed; bottom: 0; left: 0; z-index: 999;">
-        <APlayer :music="music" :float="true" :shuffle="true" :listFolded="true" autoplay="true" :list="list" />
+        <APlayer :music="music" :float="true" :shuffle="true" :listFolded="true" :list="list"/>
       </div>
 </template>
 
@@ -13,12 +13,7 @@ const music = ref({
   artist: 'DAZBEE',
   src: 'https://music.163.com/song/media/outer/url?id=2085560360.mp3', // 替换为实际音频文件路径
   pic: '/musicimg.jpg'  // 替换为实际封面图片路径
-},{
-    title: 'Zenith',
-    artist: 'KARAKURI',
-    src: 'https://music.163.com/song/media/outer/url?id=2019092913.mp3', // 替换为实际音频文件路径
-    pic: 'https://p3.music.126.net/wGqRIS6kYizTDXIn3tWsAA==/109951168277970190.jpg?param=300y300'  // 替换为实际封面图片路径
-  },
+}
 )
 
 const list = [
@@ -33,6 +28,12 @@ const list = [
     src: 'https://music.163.com/song/media/outer/url?id=2019092913.mp3', // 替换为实际音频文件路径
     pic: 'https://p3.music.126.net/wGqRIS6kYizTDXIn3tWsAA==/109951168277970190.jpg?param=300y300'  // 替换为实际封面图片路径
   },
+  {
+    title: 'disco light',
+    artist: 'ShibayanRecords',
+    src: 'https://music.163.com/song/media/outer/url?id=1960160744.mp3',
+    pic: 'https://p2.music.126.net/8xbS3r5CLdgvV_ObMidiGw==/109951167604592544.jpg?param=90y90'
+  }
 ]
 
 

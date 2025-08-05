@@ -16,9 +16,9 @@ export default defineClientConfig({
   setup() {
     const router = useRouter()
     
-  const sidebarContainer = document.createElement('div')
-    document.body.appendChild(sidebarContainer)
-    createApp(h(ResponsiveSidebar)).mount(sidebarContainer)
+  // const sidebarContainer = document.createElement('div')
+  //   document.body.appendChild(sidebarContainer)
+  //   createApp(h(ResponsiveSidebar)).mount(sidebarContainer)
 
     if (typeof window !== 'undefined') {
   import('./components/ClientScripts.vue').then(({ default: ClientScripts }) => {
@@ -39,6 +39,17 @@ export default defineClientConfig({
         console.error('Failed to load MusicPlayer:', err)
       })
     }
+
+    if (typeof window !== 'undefined') {
+      import('./components/LinkCheck.vue').then(({ default: LinkCheck }) => {
+        const linkCheckContainer = document.createElement('div')
+        document.body.appendChild(linkCheckContainer)
+        createApp(h(LinkCheck)).mount(linkCheckContainer)
+      }).catch(err => {
+        console.error('Failed to load LinkCheck:', err)
+      })
+    }
+
 
   let readTimeApp: any = null
 let readTimeContainer: HTMLElement | null = null
