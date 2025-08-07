@@ -33,6 +33,11 @@ const list = [
     artist: 'ShibayanRecords',
     src: 'https://music.163.com/song/media/outer/url?id=1960160744.mp3',
     pic: 'https://p2.music.126.net/8xbS3r5CLdgvV_ObMidiGw==/109951167604592544.jpg?param=90y90'
+  },{
+    title: 'moremoremore',
+    artist: '中村さんそ',
+    src: 'https://music.163.com/song/media/outer/url?id=1840237913.mp3',
+    pic: 'https://p1.music.126.net/NmQw4g1fbkt91EJFLXNTsg==/109951165924052279.jpg?param=90y90'
   }
 ]
 
