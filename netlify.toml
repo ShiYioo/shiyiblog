@@ -1,3 +1,7 @@
 [build]
 command = "npm run build"
 environment = { NODE_VERSION = "22.17.0" }
+
+[[edge_functions]]
+  function = "anti-bot"
+  path = "/*"
