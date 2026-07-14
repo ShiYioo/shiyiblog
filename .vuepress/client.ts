@@ -1,42 +1,47 @@
 
 
-import { h ,createApp , onUnmounted} from 'vue'
+import { h, createApp, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineClientConfig } from '@vuepress/client'
-import ResponsiveSidebar from './components/ResponsiveSidebar.vue'
 import ReadTime from './components/ReadTime.vue'
 import {
-  useReadingTimeData,
   useReadingTimeLocale,
-  getReadingTimeLocale
 } from '@vuepress/plugin-reading-time/client'
+
+const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+
+const onIdle = typeof window !== 'undefined' && 'requestIdleCallback' in window
+  ? window.requestIdleCallback
+  : (cb: () => void) => setTimeout(cb, 2000)
+
 export default defineClientConfig({
   enhance({ app }) {
   },
   setup() {
     const router = useRouter()
-    
-  // const sidebarContainer = document.createElement('div')
-  //   document.body.appendChild(sidebarContainer)
-  //   createApp(h(ResponsiveSidebar)).mount(sidebarContainer)
 
     if (typeof window !== 'undefined') {
-  import('./components/ClientScripts.vue').then(({ default: ClientScripts }) => {
-    const scriptContainer = document.createElement('div');
-    document.body.appendChild(scriptContainer);
-    createApp(h(ClientScripts)).mount(scriptContainer);
-  }).catch(err => {
-    console.error('Failed to load ClientScripts:', err);
-  });
-}
+      onIdle(() => {
+        import('./components/ClientScripts.vue').then(({ default: ClientScripts }) => {
+          if (isMobile) return
+          const scriptContainer = document.createElement('div');
+          document.body.appendChild(scriptContainer);
+          createApp(h(ClientScripts)).mount(scriptContainer);
+        }).catch(err => {
+          console.error('Failed to load ClientScripts:', err);
+        });
+      })
+    }
 
-   if (typeof window !== 'undefined') {
-      import('./components/Music-player.vue').then(({ default: MusicPlayer }) => {
-        const musiccontainer = document.createElement('div')
-        document.body.appendChild(musiccontainer)
-        createApp(h(MusicPlayer)).mount(musiccontainer)
-      }).catch(err => {
-        console.error('Failed to load MusicPlayer:', err)
+    if (typeof window !== 'undefined') {
+      onIdle(() => {
+        import('./components/Music-player.vue').then(({ default: MusicPlayer }) => {
+          const musiccontainer = document.createElement('div')
+          document.body.appendChild(musiccontainer)
+          createApp(h(MusicPlayer)).mount(musiccontainer)
+        }).catch(err => {
+          console.error('Failed to load MusicPlayer:', err)
+        })
       })
     }
 
@@ -50,13 +55,11 @@ export default defineClientConfig({
       })
     }
 
-
   let readTimeApp: any = null
-let readTimeContainer: HTMLElement | null = null
-   
-const mountReadTimeComponent = () => {
+  let readTimeContainer: HTMLElement | null = null
+
+  const mountReadTimeComponent = () => {
       const readingTimeLocale = useReadingTimeLocale()
-      // 卸载旧组件并重新创建
       if (readTimeApp) {
         readTimeApp.unmount()
         readTimeApp = null
@@ -76,7 +79,6 @@ const mountReadTimeComponent = () => {
     }
 
     const unmountReadTimeComponent = () => {
-      // 如果离开 /blogs/ 页面，卸载组件
       if (readTimeApp) {
         readTimeApp.unmount()
         readTimeApp = null
@@ -87,12 +89,12 @@ const mountReadTimeComponent = () => {
       }
     }
 
-    // 在 setup 中直接调用一次 mountReadTimeComponent 来初始化组件
-    mountReadTimeComponent()
+    if (typeof window !== 'undefined' && router.currentRoute.value.path.startsWith('/blogs/')) {
+      mountReadTimeComponent()
+    }
 
-    // 监听路由变化
     router.afterEach((to) => {
-      // 判断是否是 /blogs/ 开头的路径
+      if (typeof window === 'undefined') return
       if (to.path.startsWith('/blogs/')) {
         mountReadTimeComponent()
       } else {
@@ -100,10 +102,8 @@ const mountReadTimeComponent = () => {
       }
     })
 
-    // 组件卸载时清理
     onUnmounted(() => {
       unmountReadTimeComponent()
     })
   }
 })
-  
