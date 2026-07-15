@@ -181,8 +181,8 @@ onBeforeUnmount(() => {
 /* ========== 移动端 ========== */
 @media (max-width: 768px) {
   .spirit-widget {
-    bottom: 12px;
-    right: 12px;
+    bottom: 68px;
+    right: 10px;
     animation: none;
   }
 
