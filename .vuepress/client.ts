@@ -54,6 +54,15 @@ export default defineClientConfig({
   setup() {
     const router = useRouter()
 
+    if (typeof window !== 'undefined' && !sessionStorage.getItem('loaded')) {
+      sessionStorage.setItem('loaded', '1')
+      import('./components/LoadingScreen.vue').then(({ default: LoadingScreen }) => {
+        const container = document.createElement('div')
+        document.body.appendChild(container)
+        createApp(h(LoadingScreen)).mount(container)
+      }).catch(() => {})
+    }
+
     if (typeof window !== 'undefined') {
       onIdle(() => {
         import('./components/ClientScripts.vue').then(({ default: ClientScripts }) => {
