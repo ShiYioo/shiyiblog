@@ -132,7 +132,7 @@ export default defineClientConfig({
       }
     }
 
-    if (typeof window !== 'undefined' && router.currentRoute.value.path.startsWith('/blogs/')) {
+    if (typeof window !== 'undefined' && !isMobile && router.currentRoute.value.path.startsWith('/blogs/')) {
       mountReadTimeComponent()
     }
 
@@ -142,7 +142,7 @@ export default defineClientConfig({
 
     router.afterEach((to) => {
       if (typeof window === 'undefined') return
-      if (to.path.startsWith('/blogs/')) {
+      if (!isMobile && to.path.startsWith('/blogs/')) {
         mountReadTimeComponent()
       } else {
         unmountReadTimeComponent()

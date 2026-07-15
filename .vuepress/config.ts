@@ -16,7 +16,7 @@ export default defineUserConfig({
   ],
   plugins:[
     oml2dPlugin({
-      mobileDisplay: true,
+      mobileDisplay: false,
       dockedPosition: 'left',
       primaryColor: '#ff8fab',
       sayHello: true,
