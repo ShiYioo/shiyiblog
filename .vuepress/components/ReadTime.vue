@@ -1,8 +1,21 @@
 <template>
-  <div class="card-container" ref="card">
-    <div class="card-content">
-      <p>字数：{{ wordCount }} </p>
-      <p>预计阅读时间：{{ readingTime }} </p>
+  <div class="spirit-widget" ref="widget">
+    <div class="spirit-progress-track">
+      <div class="spirit-progress-fill" :style="{ width: scrollProgress + '%' }"></div>
+    </div>
+    <div class="spirit-card">
+      <div class="spirit-row">
+        <span class="spirit-icon icon-book"></span>
+        <span class="spirit-label">字数</span>
+        <span class="spirit-value">{{ wordCount }}</span>
+      </div>
+      <div class="spirit-divider"></div>
+      <div class="spirit-row">
+        <span class="spirit-icon icon-clock"></span>
+        <span class="spirit-label">予読</span>
+        <span class="spirit-value">{{ readingTime }}</span>
+      </div>
+      <div class="spirit-pct">{{ Math.floor(scrollProgress) }}%</div>
     </div>
   </div>
 </template>
@@ -10,105 +23,190 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   wordCount: string
   readingTime: string
 }>()
 
-const card = ref<HTMLElement | null>(null)
-const isDragging = ref(false)
-const offset = { x: 0, y: 0 }
+const scrollProgress = ref(0)
 
-const onMouseDown = (e: MouseEvent) => {
-  isDragging.value = true
-  offset.x = e.clientX - (card.value?.offsetLeft || 0)
-  offset.y = e.clientY - (card.value?.offsetTop || 0)
-}
-
-const onMouseMove = (e: MouseEvent) => {
-  if (!isDragging.value) return
-  if (card.value) {
-    card.value.style.left = `${e.clientX - offset.x}px`
-    card.value.style.top = `${e.clientY - offset.y}px`
-  }
-}
-
-const onMouseUp = () => {
-  isDragging.value = false
-  if (card.value) {
-    const x = card.value.style.left
-    const y = card.value.style.top
-    localStorage.setItem('readTimeCardPosition', JSON.stringify({ x, y }))
-  }
+const onScroll = () => {
+  const el = document.documentElement
+  const scrollTop = el.scrollTop || document.body.scrollTop
+  const scrollHeight = el.scrollHeight - el.clientHeight
+  scrollProgress.value = scrollHeight > 0 ? Math.min(100, (scrollTop / scrollHeight) * 100) : 0
 }
 
 onMounted(() => {
-  const savedPos = localStorage.getItem('readTimeCardPosition')
-  if (savedPos && card.value) {
-    const { x, y } = JSON.parse(savedPos)
-    card.value.style.left = x
-    card.value.style.top = y
-  }
-
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('mouseup', onMouseUp)
-  if (card.value) {
-    card.value.addEventListener('mousedown', onMouseDown)
-  }
+  window.addEventListener('scroll', onScroll, { passive: true })
+  onScroll()
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('mousemove', onMouseMove)
-  window.removeEventListener('mouseup', onMouseUp)
-  if (card.value) {
-    card.value.removeEventListener('mousedown', onMouseDown)
-  }
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
 
 <style scoped>
-.card-container {
+.spirit-widget {
   position: fixed;
-  left: 100px;
-  top: 100px;
-  width: 200px;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.6); /* 半透明白色背景 */
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  opacity: 0.8; /* 整体透明度控制 */
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9990;
   user-select: none;
-  cursor: move;
-  transition: transform 0.2s ease;
-  z-index: 9999;
-  pointer-events: auto; /* 只有需要点击的地方才响应事件 */
-  touch-action: pan-y pinch-zoom; /* 允许纵向滚动和缩放 */
+  animation: spirit-float 4s ease-in-out infinite;
 }
 
-.card-container * {
-  pointer-events: auto;
+@keyframes spirit-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-.card-container:hover {
-  transform: scale(1.03);
+/* ========== 进度条 ========== */
+.spirit-progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(200, 200, 220, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
 }
 
-/* 手机端适配 */
+.spirit-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff8fab, #b39ddb, #6ec6ff);
+  border-radius: 10px;
+  transition: width 0.2s ease;
+  box-shadow: 0 0 6px rgba(255, 143, 171, 0.4);
+}
+
+/* ========== 主卡片 ========== */
+.spirit-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.75);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.spirit-widget:hover .spirit-card {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 143, 171, 0.15);
+}
+
+/* ========== 暗黑模式 ========== */
+:global(html.dark) .spirit-card,
+:global(body.dark) .spirit-card {
+  background: rgba(30, 30, 50, 0.75);
+  border-color: rgba(100, 100, 160, 0.2);
+}
+
+/* ========== 行 ========== */
+.spirit-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-family: 'Comic Sans MS', 'Noto Sans CJK', sans-serif;
+}
+
+.spirit-label {
+  color: #aaa3bd;
+  font-size: 0.7rem;
+}
+
+:global(html.dark) .spirit-label,
+:global(body.dark) .spirit-label {
+  color: #7878a0;
+}
+
+.spirit-value {
+  color: #7c6cb0;
+  font-weight: 600;
+}
+
+:global(html.dark) .spirit-value,
+:global(body.dark) .spirit-value {
+  color: #ce93d8;
+}
+
+.spirit-divider {
+  width: 1px;
+  height: 16px;
+  background: linear-gradient(to bottom, transparent, rgba(180, 180, 220, 0.3), transparent);
+  flex-shrink: 0;
+}
+
+/* ========== 百分比 ========== */
+.spirit-pct {
+  font-size: 0.72rem;
+  font-family: monospace;
+  color: #ff8fab;
+  min-width: 32px;
+  text-align: right;
+  font-weight: 600;
+}
+
+:global(html.dark) .spirit-pct,
+:global(body.dark) .spirit-pct {
+  color: #f48fb1;
+}
+
+/* ========== CSS图标 ========== */
+.spirit-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.icon-book {
+  background: linear-gradient(135deg, #ff8fab, #b39ddb);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 2H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 16H8V4h11v14zM4 6H2v14c0 1.1.9 2 2 2v-2V6z'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 2H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 16H8V4h11v14zM4 6H2v14c0 1.1.9 2 2 2v-2V6z'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.icon-clock {
+  background: linear-gradient(135deg, #6ec6ff, #b39ddb);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* ========== 移动端 ========== */
 @media (max-width: 768px) {
-  .card-container {
-    width: 160px;
-    left: 20px;
-    top: 20px;
-    font-size: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    pointer-events: none; /* 移动端禁用拖拽与点击事件，避免影响滑动 */
-    touch-action: pan-y pinch-zoom;
+  .spirit-widget {
+    bottom: 12px;
+    right: 12px;
+    animation: none;
   }
 
-  .card-container * {
-    pointer-events: none; /* 防止文字被误触选中 */
+  .spirit-card {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .spirit-row {
+    font-size: 0.68rem;
+  }
+
+  .spirit-label {
+    display: none;
+  }
+
+  .spirit-pct {
+    font-size: 0.65rem;
+    min-width: 26px;
+  }
+
+  .spirit-icon {
+    width: 12px;
+    height: 12px;
   }
 }
 </style>
