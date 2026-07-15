@@ -308,3 +308,33 @@ body.dark .banner-brand__description {
   to { background-position: 200% center; }
 }
 
+/* ========== Live2D 看板娘 ========== */
+#oml2d-stage {
+  bottom: 80px !important;
+  filter: drop-shadow(2px -4px 12px rgba(255, 143, 171, 0.1));
+  transition: filter 0.4s ease;
+}
+
+#oml2d-stage:hover {
+  filter: drop-shadow(2px -4px 18px rgba(255, 143, 171, 0.2));
+}
+
+/* 看板娘对话气泡 */
+#oml2d-tips {
+  border-color: rgba(255, 143, 171, 0.4) !important;
+  box-shadow: 0 0 12px rgba(255, 143, 171, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 看板娘状态条 */
+#oml2d-statusBar {
+  border-color: rgba(255, 143, 171, 0.4) !important;
+  box-shadow: 0 0 10px rgba(255, 143, 171, 0.12) !important;
+}
+
+/* 移动端看板娘缩小透明 */
+@media (max-width: 768px) {
+  #oml2d-stage {
+    opacity: 0.75;
+  }
+}
+
