@@ -16,6 +16,7 @@ const loadingTexts = [
 
 let textTimer = null
 let progressTimer = null
+let finished = false
 
 onMounted(() => {
   textTimer = setInterval(() => {
@@ -25,6 +26,7 @@ onMounted(() => {
   const img = new Image()
   const startTime = Date.now()
   const MIN_DISPLAY = 2000
+  const MAX_WAIT = 8000
 
   const smoothProgress = () => {
     progressTimer = setInterval(() => {
@@ -37,6 +39,8 @@ onMounted(() => {
   }
 
   const finish = () => {
+    if (finished) return
+    finished = true
     clearInterval(progressTimer)
     progress.value = 100
     setTimeout(() => {
@@ -47,20 +51,19 @@ onMounted(() => {
     }, 300)
   }
 
-  img.onload = () => {
+  const triggerFinish = () => {
     const elapsed = Date.now() - startTime
     const wait = Math.max(0, MIN_DISPLAY - elapsed)
     setTimeout(finish, wait)
   }
 
-  img.onerror = () => {
-    const elapsed = Date.now() - startTime
-    const wait = Math.max(0, MIN_DISPLAY - elapsed)
-    setTimeout(finish, wait)
-  }
+  img.onload = triggerFinish
+  img.onerror = triggerFinish
 
   img.src = '/bgimg1.jpg'
   smoothProgress()
+
+  setTimeout(finish, MAX_WAIT)
 })
 
 onBeforeUnmount(() => {
@@ -78,20 +81,14 @@ onBeforeUnmount(() => {
         '--x': (Math.random() * 100) + '%',
       }"></span>
     </div>
-
     <div class="magic-circle">
       <div class="ring ring-outer"></div>
       <div class="ring ring-middle"></div>
       <div class="ring ring-inner"></div>
-      <div class="rune rune-1"></div>
-      <div class="rune rune-2"></div>
-      <div class="rune rune-3"></div>
-      <div class="rune rune-4"></div>
       <div class="core">
         <div class="core-star"></div>
       </div>
     </div>
-
     <div class="loading-info">
       <div class="loading-text">{{ loadingTexts[textIndex] }}</div>
       <div class="progress-track">
@@ -105,7 +102,10 @@ onBeforeUnmount(() => {
 <style scoped>
 .loading-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 99999;
   display: flex;
   flex-direction: column;
@@ -121,7 +121,6 @@ onBeforeUnmount(() => {
   visibility: hidden;
 }
 
-/* ========== 魔法阵 ========== */
 .magic-circle {
   position: relative;
   width: 220px;
@@ -134,7 +133,7 @@ onBeforeUnmount(() => {
 }
 
 .ring-outer {
-  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   border: 2px solid transparent;
   border-top-color: #ff8fab;
   border-right-color: #b39ddb;
@@ -143,36 +142,22 @@ onBeforeUnmount(() => {
 }
 
 .ring-middle {
-  inset: 22px;
+  top: 22px; left: 22px; right: 22px; bottom: 22px;
   border: 2px dashed rgba(179, 157, 219, 0.45);
   animation: spin-ccw 5s linear infinite;
 }
 
 .ring-inner {
-  inset: 44px;
+  top: 44px; left: 44px; right: 44px; bottom: 44px;
   border: 2px solid transparent;
   border-bottom-color: #6ec6ff;
   border-left-color: #ff8fab;
   animation: spin-cw 2s linear infinite;
 }
 
-/* 符文装饰点 */
-.rune {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: linear-gradient(135deg, #ff8fab, #b39ddb);
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-}
-
-.rune-1 { top: -4px; left: 50%; transform: translateX(-50%); animation: spin-cw 3s linear infinite; transform-origin: 4px 114px; }
-.rune-2 { top: 50%; right: -4px; transform: translateY(-50%); animation: spin-cw 3s linear infinite; transform-origin: -106px 4px; }
-.rune-3 { bottom: -4px; left: 50%; transform: translateX(-50%); animation: spin-cw 3s linear infinite; transform-origin: 4px -106px; }
-.rune-4 { top: 50%; left: -4px; transform: translateY(-50%); animation: spin-cw 3s linear infinite; transform-origin: 114px 4px; }
-
 .core {
   position: absolute;
-  inset: 70px;
+  top: 70px; left: 70px; right: 70px; bottom: 70px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 143, 171, 0.25), rgba(110, 198, 255, 0.1), transparent);
   display: flex;
@@ -189,23 +174,16 @@ onBeforeUnmount(() => {
   box-shadow: 0 0 20px rgba(255, 143, 171, 0.6);
 }
 
-@keyframes spin-cw {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes spin-ccw {
-  to { transform: rotate(-360deg); }
-}
-
+@keyframes spin-cw { to { transform: rotate(360deg); } }
+@keyframes spin-ccw { to { transform: rotate(-360deg); } }
 @keyframes core-pulse {
   0%, 100% { transform: scale(1); opacity: 0.9; }
   50% { transform: scale(1.15); opacity: 1; }
 }
 
-/* ========== 樱花花瓣 ========== */
 .petals {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   overflow: hidden;
   pointer-events: none;
 }
@@ -223,25 +201,12 @@ onBeforeUnmount(() => {
 }
 
 @keyframes petal-fall {
-  0% {
-    top: -20px;
-    opacity: 0;
-    transform: rotate(0deg) scale(0.8);
-  }
-  10% {
-    opacity: 0.6;
-  }
-  90% {
-    opacity: 0.4;
-  }
-  100% {
-    top: 110%;
-    opacity: 0;
-    transform: rotate(720deg) scale(1.2);
-  }
+  0% { top: -20px; opacity: 0; transform: rotate(0deg) scale(0.8); }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.4; }
+  100% { top: 110%; opacity: 0; transform: rotate(720deg) scale(1.2); }
 }
 
-/* ========== 加载信息 ========== */
 .loading-info {
   display: flex;
   flex-direction: column;
