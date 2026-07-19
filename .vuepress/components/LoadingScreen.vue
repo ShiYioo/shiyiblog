@@ -4,44 +4,59 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 const visible = ref(true)
 const fading = ref(false)
 const progress = ref(0)
-const textIndex = ref(0)
+const currentAvatar = ref(0)
 
-const loadingTexts = [
-  '正在展开魔法阵...',
-  '召唤式神中...',
-  '正在连接异世界...',
-  '加载樱花结界...',
-  '即将転生...',
+// 4 张立绘（直接外链蔚蓝档案 CDN）
+const avatars = [
+  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar1.c18ce793.png',
+  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar2.916294c1.png',
+  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar3.5e643647.png',
+  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar4.be61bf91.png',
 ]
 
-let textTimer = null
 let progressTimer = null
+let switchTimer = null
 let finished = false
 
 onMounted(() => {
-  textTimer = setInterval(() => {
-    textIndex.value = (textIndex.value + 1) % loadingTexts.length
-  }, 1800)
+  // 头像切换：每 0.5s 触发一次 onRepeat 等价，跳一次切一次 = 每 1s 切一次
+  let skip = true
+  switchTimer = setInterval(() => {
+    if (skip) { skip = false; return }
+    skip = true
+    let next
+    do { next = Math.floor(Math.random() * 4) } while (next === currentAvatar.value)
+    currentAvatar.value = next
+  }, 500)
 
+  // 进度条逻辑（严格复刻：3 段速度）
   const img = new Image()
   const startTime = Date.now()
-  const MIN_DISPLAY = 2000
-  const MAX_WAIT = 8000
+  const MIN_DISPLAY = 2500
+  const MAX_WAIT = 12000
 
-  const smoothProgress = () => {
-    progressTimer = setInterval(() => {
-      if (img.complete && progress.value < 90) {
-        progress.value = 90
-      } else if (!img.complete && progress.value < 85) {
-        progress.value += Math.random() * 3
-      }
-    }, 100)
-  }
+  progressTimer = setInterval(() => {
+    if (progress.value >= 100) {
+      clearInterval(progressTimer)
+      return
+    }
+    if (img.complete) {
+      // 资源就绪，飞快冲到 100
+      progress.value = Math.min(100, progress.value + 2)
+    } else if (progress.value > 80 && progress.value < 99.9) {
+      // 80%+ 卡住等资源
+      progress.value += 0.016
+    } else {
+      // 正常加载中
+      progress.value += 0.3
+    }
+  }, 16)
 
   const finish = () => {
     if (finished) return
     finished = true
     clearInterval(progressTimer)
+    clearInterval(switchTimer)
     progress.value = 100
     setTimeout(() => {
       fading.value = true
@@ -61,194 +76,140 @@ onMounted(() => {
   img.onerror = triggerFinish
 
   img.src = '/bgimg1.jpg'
-  smoothProgress()
-
   setTimeout(finish, MAX_WAIT)
 })
 
 onBeforeUnmount(() => {
-  if (textTimer) clearInterval(textTimer)
   if (progressTimer) clearInterval(progressTimer)
+  if (switchTimer) clearInterval(switchTimer)
 })
 </script>
 
 <template>
-  <div v-if="visible" class="loading-overlay" :class="{ 'is-fading': fading }">
-    <div class="petals">
-      <span v-for="n in 8" :key="n" class="petal" :style="{
-        '--delay': (n * 0.4) + 's',
-        '--duration': (3 + n * 0.3) + 's',
-        '--x': (Math.random() * 100) + '%',
-      }"></span>
-    </div>
-    <div class="magic-circle">
-      <div class="ring ring-outer"></div>
-      <div class="ring ring-middle"></div>
-      <div class="ring ring-inner"></div>
-      <div class="core">
-        <div class="core-star"></div>
+  <div v-if="visible" class="loading_wrapper" :class="{ 'is-fading': fading }">
+    <div class="avatar_img">
+      <img :src="avatars[currentAvatar]" alt="" />
+      <!-- 预加载所有立绘 -->
+      <div class="hide">
+        <img v-for="(src, i) in avatars" :key="i" :src="src" alt="" />
       </div>
     </div>
-    <div class="loading-info">
-      <div class="loading-text">{{ loadingTexts[textIndex] }}</div>
-      <div class="progress-track">
-        <div class="progress-fill" :style="{ width: progress + '%' }"></div>
-      </div>
-      <div class="progress-num">{{ Math.floor(progress) }}%</div>
+    <div class="progress_wrapper">
+      <h1 class="title">connecting<span class="dots">...</span></h1>
+      <div class="percent">{{ Math.floor(progress) }}%</div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.loading-overlay {
+.loading_wrapper {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   z-index: 99999;
+  background: url('https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/loading_bg_pc.ba246778.png') center/cover no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 40px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  gap: 12px;
   transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+  font-family: 'TVPS-Vain-Capital-2', 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+  overflow: hidden;
 }
 
-.loading-overlay.is-fading {
+.loading_wrapper.is-fading {
   opacity: 0;
   visibility: hidden;
 }
 
-.magic-circle {
+/* 立绘容器：GSAP from y:-30, duration 0.5s, power1.in, yoyo, infinite */
+.avatar_img {
+  width: 222px;
+  max-width: 40vw;
   position: relative;
-  width: 220px;
-  height: 220px;
+  animation: ba-float 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite alternate;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
 }
 
-.ring {
-  position: absolute;
-  border-radius: 50%;
+@keyframes ba-float {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -30px, 0); }
 }
 
-.ring-outer {
-  top: 0; left: 0; right: 0; bottom: 0;
-  border: 2px solid transparent;
-  border-top-color: #ff8fab;
-  border-right-color: #b39ddb;
-  animation: spin-cw 3s linear infinite;
-  box-shadow: 0 0 30px rgba(255, 143, 171, 0.25);
+.avatar_img > img:first-child {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-.ring-middle {
-  top: 22px; left: 22px; right: 22px; bottom: 22px;
-  border: 2px dashed rgba(179, 157, 219, 0.45);
-  animation: spin-ccw 5s linear infinite;
+/* 预加载容器 */
+.hide {
+  display: none;
 }
 
-.ring-inner {
-  top: 44px; left: 44px; right: 44px; bottom: 44px;
-  border: 2px solid transparent;
-  border-bottom-color: #6ec6ff;
-  border-left-color: #ff8fab;
-  animation: spin-cw 2s linear infinite;
-}
-
-.core {
-  position: absolute;
-  top: 70px; left: 70px; right: 70px; bottom: 70px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 143, 171, 0.25), rgba(110, 198, 255, 0.1), transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: core-pulse 1.5s ease-in-out infinite;
-}
-
-.core-star {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #ff8fab, #b39ddb, #6ec6ff);
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  box-shadow: 0 0 20px rgba(255, 143, 171, 0.6);
-}
-
-@keyframes spin-cw { to { transform: rotate(360deg); } }
-@keyframes spin-ccw { to { transform: rotate(-360deg); } }
-@keyframes core-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.15); opacity: 1; }
-}
-
-.petals {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.petal {
-  position: absolute;
-  top: -20px;
-  left: var(--x);
-  width: 10px;
-  height: 10px;
-  background: linear-gradient(135deg, #ff8fab, #ffc0cb);
-  clip-path: polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 60% 90%, 50% 100%, 40% 90%, 10% 70%, 0% 35%, 20% 10%);
-  opacity: 0;
-  animation: petal-fall var(--duration) ease-in var(--delay) infinite;
-}
-
-@keyframes petal-fall {
-  0% { top: -20px; opacity: 0; transform: rotate(0deg) scale(0.8); }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.4; }
-  100% { top: 110%; opacity: 0; transform: rotate(720deg) scale(1.2); }
-}
-
-.loading-info {
+/* 文字块 */
+.progress_wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  margin-top: 12px;
 }
 
-.loading-text {
-  color: rgba(255, 143, 171, 0.9);
-  font-size: 1rem;
-  letter-spacing: 2px;
-  font-family: 'Mochiy Pop One', 'Noto Sans CJK SC', sans-serif;
-  text-shadow: 0 0 10px rgba(255, 143, 171, 0.4);
-  animation: text-fade 1.8s ease-in-out infinite;
-  min-height: 1.5em;
+.title {
+  margin: 0;
+  color: #1289F9;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
-@keyframes text-fade {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+.dots {
+  display: inline-block;
+  animation: dots-blink 1.4s steps(4, end) infinite;
 }
 
-.progress-track {
-  width: 200px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  overflow: hidden;
+@keyframes dots-blink {
+  0%, 20%   { opacity: 0; }
+  50%, 100% { opacity: 1; }
 }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #ff8fab, #b39ddb, #6ec6ff);
-  border-radius: 10px;
-  transition: width 0.3s ease;
-  box-shadow: 0 0 8px rgba(255, 143, 171, 0.5);
+.percent {
+  margin-top: 10px;
+  color: #1289F9;
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  font-variant-numeric: tabular-nums;
 }
 
-.progress-num {
-  color: rgba(179, 157, 219, 0.7);
-  font-size: 0.85rem;
-  font-family: monospace;
-  letter-spacing: 1px;
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .avatar_img { width: 170px; }
+  .title { font-size: 26px; }
+  .percent { font-size: 18px; }
+}
+
+@media (max-width: 480px) {
+  .avatar_img { width: 140px; }
+  .title { font-size: 22px; }
+  .percent { font-size: 16px; margin-top: 8px; }
+}
+
+@media (max-width: 360px) {
+  .avatar_img { width: 115px; }
+  .title { font-size: 19px; }
+  .percent { font-size: 14px; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .avatar_img { width: 115px; }
+  .title { font-size: 22px; }
+  .percent { font-size: 16px; }
 }
 </style>
