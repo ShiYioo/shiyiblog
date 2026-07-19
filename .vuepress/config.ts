@@ -56,7 +56,7 @@ export default defineUserConfig({
           },
         },
         copyTips: {
-          message: '复制成功！转载请注明出处哦~',
+          message: ['复制成功！转载请注明出处哦~'],
         },
       },
     }),
