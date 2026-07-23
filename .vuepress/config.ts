@@ -79,6 +79,7 @@ export default defineUserConfig({
   bundler: viteBundler(),
   // bundler: webpackBundler(),
   theme: recoTheme({
+    primaryColor: '#21BBFF',
     logo: "/logo.jpg",
     author: "Shi Yi",
     authorAvatar: "/logo.jpg",
@@ -103,13 +104,7 @@ export default defineUserConfig({
       { text: "主页", link: "/" },
       { text: "分类", link: "/categories/daily/1.html" },
       { text: "标签", link: "/tags/java/1.html" },
-      {
-        text: "Docs",
-        children: [
-          // { text: "vuepress-reco", link: "/docs/theme-reco/theme" },
-          { text: "介绍", link: "/docs/other/welcome" },
-        ],
-      },
+      { text: "档案", link: "/docs/other/welcome" },
     ],
     algolia: {
     appId: '9ebbabab-4b36-4711-ac94-f677bcf9b647',
