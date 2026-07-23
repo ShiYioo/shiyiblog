@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { defineClientConfig } from '@vuepress/client'
 import ReadTime from './components/ReadTime.vue'
 import ArchiveCursor from './components/ArchiveCursor.vue'
+import ArchiveAmbient from './components/ArchiveAmbient.vue'
 import {
   useReadingTimeLocale,
 } from '@vuepress/plugin-reading-time/client'
@@ -72,19 +73,6 @@ export default defineClientConfig({
 
     if (typeof window !== 'undefined') {
       onIdle(() => {
-        import('./components/ClientScripts.vue').then(({ default: ClientScripts }) => {
-          if (isMobile) return
-          const scriptContainer = document.createElement('div');
-          document.body.appendChild(scriptContainer);
-          createApp(h(ClientScripts)).mount(scriptContainer);
-        }).catch(err => {
-          console.error('Failed to load ClientScripts:', err);
-        });
-      })
-    }
-
-    if (typeof window !== 'undefined') {
-      onIdle(() => {
         import('./components/Music-player.vue').then(({ default: MusicPlayer }) => {
           const musiccontainer = document.createElement('div')
           document.body.appendChild(musiccontainer)
@@ -107,6 +95,24 @@ export default defineClientConfig({
 
   let readTimeApp: any = null
   let readTimeContainer: HTMLElement | null = null
+  let ambientApp: any = null
+  let ambientContainer: HTMLElement | null = null
+
+  const mountAmbient = () => {
+    if (isMobile || ambientApp || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    ambientContainer = document.createElement('div')
+    document.body.appendChild(ambientContainer)
+    ambientApp = createApp(ArchiveAmbient)
+    ambientApp.mount(ambientContainer)
+  }
+
+  const unmountAmbient = () => {
+    if (!ambientApp) return
+    ambientApp.unmount()
+    ambientApp = null
+    ambientContainer?.remove()
+    ambientContainer = null
+  }
 
   const mountReadTimeComponent = () => {
       const readingTimeLocale = useReadingTimeLocale()
@@ -145,6 +151,7 @@ export default defineClientConfig({
 
     if (typeof window !== 'undefined' && router.currentRoute.value.path === '/') {
       applyRandomQuote()
+      mountAmbient()
     }
 
     router.afterEach((to) => {
@@ -156,11 +163,15 @@ export default defineClientConfig({
       }
       if (to.path === '/') {
         applyRandomQuote()
+        mountAmbient()
+      } else {
+        unmountAmbient()
       }
     })
 
     onUnmounted(() => {
       unmountReadTimeComponent()
+      unmountAmbient()
     })
   }
 })
