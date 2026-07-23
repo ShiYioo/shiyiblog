@@ -20,7 +20,6 @@ onMounted(() => {
       document.body.appendChild(script);
     };
 
-    loadScript('/cursor-trail.js');
     loadScript('/snow.js');
   });
 });

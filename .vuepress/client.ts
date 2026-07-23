@@ -4,6 +4,7 @@ import { h, createApp, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineClientConfig } from '@vuepress/client'
 import ReadTime from './components/ReadTime.vue'
+import ArchiveCursor from './components/ArchiveCursor.vue'
 import {
   useReadingTimeLocale,
 } from '@vuepress/plugin-reading-time/client'
@@ -61,6 +62,12 @@ export default defineClientConfig({
         document.body.appendChild(container)
         createApp(h(LoadingScreen)).mount(container)
       }).catch(() => {})
+    }
+
+    if (typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches) {
+      const cursorContainer = document.createElement('div')
+      document.body.appendChild(cursorContainer)
+      createApp(ArchiveCursor).mount(cursorContainer)
     }
 
     if (typeof window !== 'undefined') {
