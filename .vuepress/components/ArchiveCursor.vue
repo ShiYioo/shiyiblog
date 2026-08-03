@@ -49,14 +49,7 @@ onBeforeUnmount(() => cleanup?.())
 
 <style>
 @media (pointer: fine) {
-  html,
-  body,
-  a,
-  button,
-  input,
-  select,
-  textarea,
-  [role="button"] {
+  * {
     cursor: none !important;
   }
 }
