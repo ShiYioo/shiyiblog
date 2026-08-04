@@ -3,7 +3,6 @@
 import { h, createApp, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineClientConfig } from '@vuepress/client'
-import { loadOml2d } from 'oh-my-live2d'
 import ReadTime from './components/ReadTime.vue'
 import ArchiveCursor from './components/ArchiveCursor.vue'
 import ArchiveAmbient from './components/ArchiveAmbient.vue'
@@ -99,9 +98,10 @@ export default defineClientConfig({
   setup() {
     const router = useRouter()
 
-    let oml2dInstance: ReturnType<typeof loadOml2d> | null = null
-    const initLive2d = () => {
+    let oml2dInstance: Awaited<ReturnType<typeof import('oh-my-live2d')['loadOml2d']>> | null = null
+    const initLive2d = async () => {
       if (oml2dInstance || typeof window === 'undefined') return
+      const { loadOml2d } = await import('oh-my-live2d')
       oml2dInstance = loadOml2d({
         mobileDisplay: false,
         dockedPosition: 'left',
