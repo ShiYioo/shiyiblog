@@ -1,8 +1,9 @@
 
 
-import { h, createApp, onUnmounted } from 'vue'
+import { h, createApp, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineClientConfig } from '@vuepress/client'
+import { loadOml2d } from 'oh-my-live2d'
 import ReadTime from './components/ReadTime.vue'
 import ArchiveCursor from './components/ArchiveCursor.vue'
 import ArchiveAmbient from './components/ArchiveAmbient.vue'
@@ -97,6 +98,32 @@ export default defineClientConfig({
   },
   setup() {
     const router = useRouter()
+
+    let oml2dInstance: ReturnType<typeof loadOml2d> | null = null
+    const initLive2d = () => {
+      if (oml2dInstance || typeof window === 'undefined') return
+      oml2dInstance = loadOml2d({
+        mobileDisplay: false,
+        dockedPosition: 'left',
+        primaryColor: '#ff8fab',
+        sayHello: true,
+        models: [{
+          path: '/live2d/HK416-2-destroy/model.json',
+          scale: 0.07,
+          mobileScale: 0.04,
+          position: [-1, 40],
+          stageStyle: { width: 200 }
+        }],
+        tips: {
+          idleTips: { interval: 12000, duration: 5000, message: ['欢迎来到我的小库~','今天也要元气满满哦~','要不要一起看番呢？','代码写累了，休息一下吧~','咕咕咕，今天摸鱼了吗？','二次元才是真爱！','早点睡觉，不要熬夜哦~'] },
+          welcomeTips: { message: { daybreak: '早上好！一日之计在于晨，美好的一天开始啦~', morning: '上午好！工作顺利吗？不要久坐哦~', noon: '中午了，该吃午饭啦！别忘了吃饭~', afternoon: '午后容易犯困呢，注意休息~', dusk: '傍晚了！辛苦一天啦~', night: '晚上好，今天过得怎么样呢？', lateNight: '已经这么晚了，早点休息吧，晚安~', weeHours: '这么晚还不睡？当心熬夜秃头哦！' } },
+          copyTips: { message: ['复制成功！转载请注明出处哦~'] }
+        }
+      })
+    }
+    if (typeof window !== 'undefined') {
+      onMounted(initLive2d)
+    }
 
     if (typeof window !== 'undefined' && !sessionStorage.getItem('loaded')) {
       sessionStorage.setItem('loaded', '1')
@@ -215,6 +242,10 @@ export default defineClientConfig({
       }
 
       ensureMagicCard()
+
+      if (oml2dInstance) {
+        setTimeout(() => { try { oml2dInstance?.reloadModel() } catch (e) {} }, 600)
+      }
     })
 
     onUnmounted(() => {
