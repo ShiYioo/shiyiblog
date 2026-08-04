@@ -880,6 +880,41 @@ hideComments: true
         .profile-archive-page .archive-content { padding: 28px 20px; }
         .profile-archive-page .archive-selector { right: 50%; transform: translateX(50%); }
     }
+
+    /* ========== 暗色模式适配 ========== */
+    html.dark .profile-archive-page,
+    body.dark .profile-archive-page {
+        --archive-ink: #c8d6e5;
+        --archive-muted: #8a9aab;
+        background-color: #0e151f;
+        background-image:
+            linear-gradient(30deg, transparent 49.4%, rgba(120, 160, 190, .05) 50%, transparent 50.6%),
+            linear-gradient(150deg, transparent 49.4%, rgba(120, 160, 190, .05) 50%, transparent 50.6%);
+        background-size: 280px 240px;
+    }
+    html.dark .profile-archive-page .archive-stage {
+        background:
+            linear-gradient(90deg, rgba(20, 28, 42, .96) 0 39%, rgba(20, 28, 42, .62) 39% 100%),
+            repeating-linear-gradient(60deg, transparent 0 136px, rgba(120, 170, 210, .05) 137px 139px, transparent 140px 274px),
+            #131c28;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+    }
+    html.dark .profile-archive-page .archive-stage::after { color: rgba(200, 214, 229, .5); }
+    html.dark .profile-archive-page .archive-footer { color: rgba(138, 154, 171, .7); }
+    html.dark .profile-archive-page .archive-content {
+        background: rgba(18, 26, 38, .85);
+        border-color: rgba(33, 187, 255, .18);
+    }
+    html.dark .profile-archive-page .sel-item {
+        background: rgba(20, 28, 42, .9);
+        border-color: rgba(120, 150, 175, .2);
+    }
+    html.dark .profile-archive-page .sel-item.active {
+        border-color: var(--archive-blue);
+        box-shadow: 0 0 0 4px rgba(22, 138, 245, .18);
+    }
+    html.dark .profile-archive-page .archive-panel,
+    body.dark .profile-archive-page .archive-panel { background: transparent !important; box-shadow: none !important; }
 </style>
 
 <div class="welcome-page-wrapper profile-archive-page">
