@@ -50,6 +50,48 @@ function applyRandomQuote() {
   tryReplace(0)
 }
 
+let magicCards: HTMLElement[] = []
+let magicRafId = 0
+let magicMouseX = 0
+let magicMouseY = 0
+let magicBound = false
+
+const refreshMagicCards = () => {
+  magicCards = Array.from(document.querySelectorAll<HTMLElement>('.magic-card'))
+  magicCards.forEach((card) => {
+    const rect = card.getBoundingClientRect()
+    card.dataset.x = String(rect.left + window.scrollX)
+    card.dataset.y = String(rect.top + window.scrollY)
+  })
+}
+
+const runMagicFrame = () => {
+  magicRafId = 0
+  magicCards.forEach((card) => {
+    const x = Math.floor(magicMouseX - Number(card.dataset.x || 0))
+    const y = Math.floor(magicMouseY - Number(card.dataset.y || 0))
+    card.style.setProperty('--x', `${x}px`)
+    card.style.setProperty('--y', `${y}px`)
+  })
+}
+
+const onMagicMouseMove = (e: MouseEvent) => {
+  magicMouseX = e.pageX
+  magicMouseY = e.pageY
+  if (!magicRafId) magicRafId = requestAnimationFrame(runMagicFrame)
+}
+
+const ensureMagicCard = () => {
+  if (typeof window === 'undefined') return
+  if (!magicBound) {
+    magicBound = true
+    window.addEventListener('mousemove', onMagicMouseMove, { passive: true })
+  }
+  refreshMagicCards()
+  setTimeout(refreshMagicCards, 200)
+  setTimeout(refreshMagicCards, 600)
+}
+
 export default defineClientConfig({
   enhance({ app }) {
   },
@@ -154,6 +196,10 @@ export default defineClientConfig({
       mountAmbient()
     }
 
+    if (typeof window !== 'undefined') {
+      ensureMagicCard()
+    }
+
     router.afterEach((to) => {
       if (typeof window === 'undefined') return
       if (!isMobile && to.path.startsWith('/blogs/')) {
@@ -167,6 +213,8 @@ export default defineClientConfig({
       } else {
         unmountAmbient()
       }
+
+      ensureMagicCard()
     })
 
     onUnmounted(() => {
