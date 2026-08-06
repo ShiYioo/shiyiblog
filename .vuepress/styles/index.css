@@ -509,6 +509,25 @@ body:has(.archive-page) .aplayer {
   display: none !important;
 }
 
+/* 404 是独立的检索终端页面，不能继承主题的内容栏宽度。 */
+body:has(.archive-not-found) .theme-container,
+body:has(.archive-not-found) .theme-main {
+  width: 100% !important;
+  max-width: none !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+body:has(.archive-not-found) .theme-main {
+  display: block !important;
+}
+
+body:has(.archive-not-found) #oml2d-stage,
+body:has(.archive-not-found) #oml2d-tips,
+body:has(.archive-not-found) .aplayer {
+  display: none !important;
+}
+
 /* ===== 全站档案系统：导航、筛选项与内容面板 ===== */
 :root {
   --archive-cyan: #21bbff;

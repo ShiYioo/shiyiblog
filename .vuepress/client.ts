@@ -6,6 +6,7 @@ import { defineClientConfig } from '@vuepress/client'
 import ReadTime from './components/ReadTime.vue'
 import ArchiveCursor from './components/ArchiveCursor.vue'
 import ArchiveAmbient from './components/ArchiveAmbient.vue'
+import NotFound from './layouts/NotFound.vue'
 import {
   useReadingTimeLocale,
 } from '@vuepress/plugin-reading-time/client'
@@ -93,6 +94,9 @@ const ensureMagicCard = () => {
 }
 
 export default defineClientConfig({
+  layouts: {
+    NotFound,
+  },
   enhance({ app }) {
   },
   setup() {
