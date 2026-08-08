@@ -947,7 +947,7 @@ hideComments: true
 <span class="halo-node w"></span>
 </div>
 <div class="avatar-hex">
-<img class="avatar-img" src="/shiyiimg-cutout.png" alt="个人立绘">
+<img class="avatar-img" src="/shiyiimg-cutout.webp" width="832" height="1216" alt="个人立绘" fetchpriority="high" decoding="async">
 </div>
 <div class="avatar-badge"></div>
 </div>
@@ -997,11 +997,11 @@ hideComments: true
 <div class="donate-cards">
 <div class="donate-card alipay">
 <div class="donate-card-title"><span class="donate-card-title-icon"></span>支付宝</div>
-<img src="/buy/zhifubaobuy.jpg" alt="支付宝二维码">
+<img src="/buy/zhifubaobuy.jpg" alt="支付宝二维码" loading="lazy" decoding="async">
 </div>
 <div class="donate-card wechat">
 <div class="donate-card-title"><span class="donate-card-title-icon"></span>微信</div>
-<img src="/buy/weixinbuy.jpg" alt="微信二维码">
+<img src="/buy/weixinbuy.jpg" alt="微信二维码" loading="lazy" decoding="async">
 </div>
 </div>
 </div>
