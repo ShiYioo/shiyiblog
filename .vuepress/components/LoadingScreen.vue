@@ -8,10 +8,10 @@ const currentAvatar = ref(0)
 
 // 4 张立绘（直接外链蔚蓝档案 CDN）
 const avatars = [
-  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar1.c18ce793.png',
-  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar2.916294c1.png',
-  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar3.5e643647.png',
-  'https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/avatar4.be61bf91.png',
+  '/ba-avatars/avatar1.c18ce793.png',
+  '/ba-avatars/avatar2.916294c1.png',
+  '/ba-avatars/avatar3.5e643647.png',
+  '/ba-avatars/avatar4.be61bf91.png',
 ]
 
 let progressTimer = null
@@ -109,7 +109,7 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   z-index: 99999;
-  background: url('https://webcnstatic.yostar.net/ba_cn_web/prod/web/assets/loading_bg_pc.ba246778.png') center/cover no-repeat;
+  background: url('/ba-loading-bg.png') center/cover no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
