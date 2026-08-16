@@ -192,6 +192,13 @@ const list = [
     src: 'https://music.163.com/song/media/outer/url?id=1840237913',
     pic: 'https://p1.music.126.net/NmQw4g1fbkt91EJFLXNTsg==/109951165924052279.jpg?param=90x90',
   },
+  {
+    id: 2735484466,
+    title: 'モニタリング (Best Friend Remix)',
+    artist: 'DECO*27 / 初音ミク',
+    src: 'https://music.163.com/song/media/outer/url?id=2735484466',
+    pic: 'https://p1.music.126.net/MS2OJ66gPnSUPST4GrXUKw==/109951171841383870.jpg?param=300x300',
+  },
 ]
 
 const currentIndex = ref(0)
