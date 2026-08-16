@@ -39,7 +39,7 @@
 
     <!-- 展开态：玻璃拟态面板 -->
     <transition name="expand">
-      <div v-if="expanded" class="panel" @click.stop>
+      <div v-if="expanded" class="panel" :class="{ 'lyrics-mode': view === 'lyric' }" @click.stop>
         <div class="panel-head">
           <div class="np-wrap">
             <span class="np-dot" :class="{ live: isPlaying }"></span>
@@ -50,70 +50,106 @@
           </button>
         </div>
 
-        <div class="art-frame">
-          <div class="art-wrap">
-            <img class="art" :src="current.pic" alt="" @error="onImgError" />
-            <span class="art-mood">{{ isPlaying ? '🎵' : '😴' }}</span>
-            <span class="corner tl"></span>
-            <span class="corner tr"></span>
-            <span class="corner bl"></span>
-            <span class="corner br"></span>
+        <div class="player-body">
+          <div class="song-summary">
+            <div class="art-frame">
+              <div class="art-wrap">
+                <img class="art" :src="current.pic" alt="" @error="onImgError" />
+                <span class="corner tl"></span>
+                <span class="corner tr"></span>
+                <span class="corner bl"></span>
+                <span class="corner br"></span>
+              </div>
+            </div>
+
+            <div class="meta">
+              <div class="song-title">{{ current.title }}</div>
+              <div class="song-artist">{{ current.artist }}</div>
+              <div class="meta-line"></div>
+            </div>
+          </div>
+
+          <div class="content-pane">
+            <div class="view-tabs" role="tablist" aria-label="播放器视图">
+              <button class="v-tab" :class="{ on: view === 'lyric' }" @click.stop="view = 'lyric'">
+                歌詞
+              </button>
+              <button class="v-tab" :class="{ on: view === 'list' }" @click.stop="view = 'list'">
+                トラック
+              </button>
+              <span class="tl-count">{{
+                view === 'list' ? list.length : lyricLines.length
+              }}</span>
+            </div>
+
+            <div
+              v-show="view === 'lyric'"
+              ref="lyricsRef"
+              class="lyrics"
+              @wheel.passive="onLyricsUserScroll"
+              @touchmove.passive="onLyricsUserScroll"
+            >
+              <template v-if="lyricLines.length">
+                <div
+                  v-for="(line, i) in lyricLines"
+                  :key="i"
+                  class="lyric-line"
+                  :class="{ active: i === activeLyric }"
+                  @click.stop="seekToLyric(line.time)"
+                >
+                  <p class="l-text">{{ line.text }}</p>
+                  <p v-if="line.trans" class="l-trans">{{ line.trans }}</p>
+                </div>
+              </template>
+              <div v-else class="lyric-empty">歌詞が見つかりませんでした ♪</div>
+            </div>
+
+            <ul class="tracklist" v-show="view === 'list'">
+              <li
+                v-for="(s, i) in list"
+                :key="i"
+                :class="{ active: i === currentIndex }"
+                @click.stop="goto(i)"
+              >
+                <div class="t-thumb-wrap">
+                  <img class="t-thumb" :src="s.pic" alt="" @error="onImgError" />
+                </div>
+                <div class="t-info">
+                  <span class="t-title">{{ s.title }}</span>
+                  <span class="t-artist">{{ s.artist }}</span>
+                </div>
+                <span class="t-eq" v-if="i === currentIndex && isPlaying">
+                  <i></i><i></i><i></i>
+                </span>
+                <span class="t-star" v-else-if="i === currentIndex">✦</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div class="meta">
-          <div class="song-title">{{ current.title }}</div>
-          <div class="song-artist">{{ current.artist }}</div>
-          <div class="meta-line"></div>
-        </div>
+        <div class="transport">
+          <div class="timeline">
+            <span>{{ formatTime(currentTime) }}</span>
+            <div class="progress" @click.stop="seek">
+              <div class="progress-fill" :style="{ width: progressPercent + '%' }">
+                <span class="progress-knob"></span>
+              </div>
+            </div>
+            <span>{{ formatTime(duration) }}</span>
+          </div>
 
-        <div class="progress" @click.stop="seek">
-          <div class="progress-fill" :style="{ width: progressPercent + '%' }">
-            <span class="progress-knob"></span>
+          <div class="controls">
+            <button class="ctrl-btn" @click.stop="goto(currentIndex - 1)" title="上一首">
+              ⏮
+            </button>
+            <button class="play-btn" :class="{ playing: isPlaying }" @click.stop="togglePlay">
+              <span class="play-icon">{{ isPlaying ? '❚❚' : '▶' }}</span>
+            </button>
+            <button class="ctrl-btn" @click.stop="goto(currentIndex + 1)" title="下一首">
+              ⏭
+            </button>
           </div>
         </div>
-        <div class="time">
-          <span>{{ formatTime(currentTime) }}</span>
-          <span>{{ formatTime(duration) }}</span>
-        </div>
-
-        <div class="controls">
-          <button class="ctrl-btn" @click.stop="goto(currentIndex - 1)" title="上一首">
-            ⏮
-          </button>
-          <button class="play-btn" :class="{ playing: isPlaying }" @click.stop="togglePlay">
-            <span class="play-icon">{{ isPlaying ? '❚❚' : '▶' }}</span>
-          </button>
-          <button class="ctrl-btn" @click.stop="goto(currentIndex + 1)" title="下一首">
-            ⏭
-          </button>
-        </div>
-
-        <div class="tracklist-head">
-          <span class="tl-diamond"></span>
-          トラックリスト
-          <span class="tl-count">{{ list.length }}</span>
-        </div>
-        <ul class="tracklist">
-          <li
-            v-for="(s, i) in list"
-            :key="i"
-            :class="{ active: i === currentIndex }"
-            @click.stop="goto(i)"
-          >
-            <div class="t-thumb-wrap">
-              <img class="t-thumb" :src="s.pic" alt="" @error="onImgError" />
-            </div>
-            <div class="t-info">
-              <span class="t-title">{{ s.title }}</span>
-              <span class="t-artist">{{ s.artist }}</span>
-            </div>
-            <span class="t-eq" v-if="i === currentIndex && isPlaying">
-              <i></i><i></i><i></i>
-            </span>
-            <span class="t-star" v-else-if="i === currentIndex">✦</span>
-          </li>
-        </ul>
       </div>
     </transition>
 
@@ -132,30 +168,28 @@
 
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { SONG_LYRICS } from '../data/song-lyrics'
 
 const list = [
   {
-    title: 'オセロ',
-    artist: 'DAZBEE',
-    src: 'https://api.injahow.cn/meting/?type=url&id=2085560360',
-    pic: '/musicimg.jpg',
-  },
-  {
+    id: 2019092913,
     title: 'Zenith',
     artist: 'KARAKURI',
-    src: 'https://api.injahow.cn/meting/?type=url&id=2019092913',
+    src: 'https://music.163.com/song/media/outer/url?id=2019092913',
     pic: 'https://p3.music.126.net/wGqRIS6kYizTDXIn3tWsAA==/109951168277970190.jpg?param=300x300',
   },
   {
+    id: 1960160744,
     title: 'disco light',
     artist: 'ShibayanRecords',
-    src: 'https://api.injahow.cn/meting/?type=url&id=1960160744',
+    src: 'https://music.163.com/song/media/outer/url?id=1960160744',
     pic: 'https://p2.music.126.net/8xbS3r5CLdgvV_ObMidiGw==/109951167604592544.jpg?param=90y90',
   },
   {
+    id: 1840237913,
     title: 'moremoremore',
     artist: '中村さんそ',
-    src: 'https://api.injahow.cn/meting/?type=url&id=1840237913',
+    src: 'https://music.163.com/song/media/outer/url?id=1840237913',
     pic: 'https://p1.music.126.net/NmQw4g1fbkt91EJFLXNTsg==/109951165924052279.jpg?param=90x90',
   },
 ]
@@ -172,6 +206,103 @@ const audioRef = ref(null)
 const progressPercent = computed(() =>
   duration.value ? (currentTime.value / duration.value) * 100 : 0
 )
+
+/* ===== 歌词：LRC 解析 + 逐行同步 ===== */
+// 面板下方视图：曲目列表 / 歌词
+const view = ref('list')
+const activeLyric = ref(-1)
+const lyricsRef = ref(null)
+let userScrollTimer = null
+let lyricUserScrolling = false
+
+// 兼容 [mm:ss.xx] [mm:ss.xxx] [mm:ss:xx] 三种时间戳写法
+function parseLrc(lrc) {
+  const out = []
+  if (!lrc) return out
+  const re = /\[(\d{1,2}):(\d{1,2})(?:[.:](\d{1,3}))?\]/g
+  for (const raw of String(lrc).split(/\r?\n/)) {
+    const text = raw.replace(re, '').trim()
+    if (!text) continue
+    let m
+    re.lastIndex = 0
+    while ((m = re.exec(raw))) {
+      const frac = m[3] ? parseFloat('0.' + m[3]) : 0
+      out.push({ time: +m[1] * 60 + +m[2] + frac, text })
+    }
+  }
+  return out.sort((a, b) => a.time - b.time)
+}
+
+// 原文按时间戳对齐翻译（误差 0.6s 内视为同一行）
+const lyricLines = computed(() => {
+  const data = SONG_LYRICS[current.value.id]
+  if (!data) return []
+  const main = parseLrc(data.lyric)
+  const trans = parseLrc(data.trans)
+  return main.map((l) => {
+    const t = trans.find((x) => Math.abs(x.time - l.time) < 0.6)
+    return { time: l.time, text: l.text, trans: t ? t.text : '' }
+  })
+})
+
+// 二分查找当前时间对应的歌词行
+watch(currentTime, (t) => {
+  const arr = lyricLines.value
+  if (!arr.length) {
+    activeLyric.value = -1
+    return
+  }
+  let lo = 0
+  let hi = arr.length - 1
+  let ans = -1
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1
+    if (arr[mid].time <= t + 0.15) {
+      ans = mid
+      lo = mid + 1
+    } else {
+      hi = mid - 1
+    }
+  }
+  activeLyric.value = ans
+})
+
+// 用户手动滚动歌词时，暂停自动跟随 3 秒
+function onLyricsUserScroll() {
+  lyricUserScrolling = true
+  clearTimeout(userScrollTimer)
+  userScrollTimer = setTimeout(() => {
+    lyricUserScrolling = false
+  }, 3000)
+}
+
+function scrollLyricTo(idx, behavior) {
+  const wrap = lyricsRef.value
+  if (!wrap || idx < 0) return
+  const el = wrap.children[idx]
+  if (!el) return
+  wrap.scrollTo({
+    top: el.offsetTop - wrap.clientHeight / 2 + el.clientHeight / 2,
+    behavior,
+  })
+}
+
+// 当前行变化时平滑滚动居中；切换到歌词视图时立即定位
+watch(activeLyric, (idx) => {
+  if (view.value !== 'lyric' || lyricUserScrolling) return
+  scrollLyricTo(idx, 'smooth')
+})
+watch(view, (v) => {
+  if (v === 'lyric') nextTick(() => scrollLyricTo(activeLyric.value, 'auto'))
+})
+
+// 点击歌词行跳转播放进度
+function seekToLyric(time) {
+  const el = audioRef.value
+  if (!el || !el.duration || isNaN(time)) return
+  el.currentTime = time
+  currentTime.value = time
+}
 
 const noteChars = ['♪', '♫', '♩', '♬']
 const particles = Array.from({ length: 10 }, (_, i) => ({
@@ -688,6 +819,9 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   text-align: center;
   margin-bottom: 14px;
 }
+.meta.compact {
+  margin-bottom: 8px;
+}
 .song-title {
   font-size: 15.5px;
   font-weight: 700;
@@ -845,6 +979,27 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   padding: 1px 7px;
   border-radius: 8px;
 }
+/* 视图切换标签（列表 / 歌词） */
+.v-tab {
+  border: none;
+  background: rgba(33, 187, 255, 0.1);
+  color: var(--ba-muted);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.v-tab:hover {
+  color: var(--ba-blue);
+  background: rgba(33, 187, 255, 0.2);
+}
+.v-tab.on {
+  color: #fff;
+  background: linear-gradient(135deg, var(--ba-cyan), var(--ba-blue));
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.4);
+}
 .tracklist {
   list-style: none;
   margin: 0;
@@ -980,6 +1135,244 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   }
 }
 
+/* ===== 歌词视图 ===== */
+.lyrics {
+  position: relative; /* 作为 offsetTop 定位基准 */
+  max-height: 168px;
+  overflow-y: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(
+    transparent,
+    #000 15%,
+    #000 85%,
+    transparent
+  );
+  mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent);
+}
+.lyrics-mode .lyrics {
+  max-height: 210px;
+  margin: 0 -3px 10px;
+  padding: 12px 5px;
+  border-top: 1px solid rgba(33, 187, 255, 0.14);
+  border-bottom: 1px solid rgba(33, 187, 255, 0.14);
+  background: rgba(33, 187, 255, 0.035);
+}
+.lyrics::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+.lyric-line {
+  padding: 6px 8px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0.45;
+  transform: scale(0.96);
+  transition: opacity 0.3s, transform 0.3s, background 0.2s;
+}
+.lyric-line:hover {
+  opacity: 0.8;
+  background: rgba(33, 187, 255, 0.08);
+}
+.lyric-line.active {
+  opacity: 1;
+  transform: scale(1);
+  background: linear-gradient(
+    90deg,
+    rgba(33, 187, 255, 0.16),
+    rgba(33, 187, 255, 0.02)
+  );
+}
+.l-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #445;
+  transition: color 0.3s;
+}
+.lyric-line.active .l-text {
+  color: var(--ba-blue);
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(33, 187, 255, 0.45);
+}
+.l-trans {
+  margin: 1px 0 0;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--ba-muted);
+}
+.lyric-empty {
+  padding: 30px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ba-muted);
+}
+
+/* ===== 横向播放台：摘要、内容与控制区分层 ===== */
+.panel {
+  right: 112px;
+  bottom: 0;
+  width: 520px;
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(248, 252, 255, 0.94);
+  box-shadow: 0 18px 48px rgba(22, 72, 112, 0.22);
+}
+.panel-head {
+  margin-bottom: 12px;
+}
+.player-body {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 220px;
+}
+.song-summary {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  border-right: 1px solid rgba(33, 187, 255, 0.16);
+}
+.song-summary .art-frame {
+  width: 116px;
+  margin: 0 0 14px;
+}
+.song-summary .meta {
+  width: 100%;
+  margin: 0;
+  padding-right: 10px;
+}
+.song-summary .song-title,
+.song-summary .song-artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.content-pane {
+  display: flex;
+  min-width: 0;
+  height: 220px;
+  flex-direction: column;
+}
+.view-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  margin-bottom: 6px;
+  padding: 3px;
+  border-radius: 6px;
+  background: rgba(33, 187, 255, 0.07);
+}
+.view-tabs .v-tab {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: none;
+  letter-spacing: 0;
+}
+.view-tabs .v-tab.on {
+  color: var(--ba-blue);
+  background: #fff;
+  box-shadow: 0 2px 7px rgba(22, 119, 255, 0.13);
+}
+.view-tabs .tl-count {
+  margin-right: 5px;
+  background: transparent;
+}
+.content-pane .lyrics,
+.content-pane .tracklist {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+}
+.content-pane .lyrics {
+  margin: 0;
+  padding: 12px 4px;
+  border: 0;
+  background: transparent;
+  -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+}
+.content-pane .lyric-line {
+  padding: 7px 10px;
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  text-align: left;
+  opacity: 0.52;
+  transform: none;
+}
+.content-pane .lyric-line:hover {
+  opacity: 0.82;
+  background: rgba(33, 187, 255, 0.05);
+}
+.content-pane .lyric-line.active {
+  border-left-color: var(--ba-cyan);
+  opacity: 1;
+  transform: none;
+  background: linear-gradient(90deg, rgba(33, 187, 255, 0.12), transparent 78%);
+}
+.content-pane .lyric-line.active .l-text {
+  font-size: 14px;
+  text-shadow: none;
+}
+.content-pane .l-trans {
+  margin-top: 3px;
+}
+.content-pane .tracklist li {
+  min-height: 54px;
+  margin-bottom: 4px;
+  padding: 5px 8px;
+  border-radius: 6px;
+}
+.content-pane .t-thumb-wrap {
+  width: 34px;
+  height: 38px;
+}
+.transport {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(33, 187, 255, 0.16);
+}
+.timeline {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 8px;
+  color: var(--ba-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.timeline span:last-child {
+  text-align: right;
+}
+.timeline .progress {
+  height: 4px;
+  margin: 0;
+}
+.transport .controls {
+  gap: 7px;
+  margin: 0;
+}
+.transport .ctrl-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+}
+.transport .play-btn {
+  width: 44px;
+  height: 44px;
+}
+
 /* ===== 展开过渡 ===== */
 .expand-enter-active,
 .expand-leave-active {
@@ -1011,6 +1404,20 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 :global(html.dark) .t-title,
 :global(body.dark) .t-title {
   color: #b8d4e8;
+}
+:global(html.dark) .l-text,
+:global(body.dark) .l-text {
+  color: #b8d4e8;
+}
+:global(html.dark) .l-trans,
+:global(body.dark) .l-trans,
+:global(html.dark) .lyric-empty,
+:global(body.dark) .lyric-empty {
+  color: #6b7f94;
+}
+:global(html.dark) .lyric-line.active .l-text,
+:global(body.dark) .lyric-line.active .l-text {
+  color: var(--ba-light);
 }
 :global(html.dark) .ctrl-btn,
 :global(body.dark) .ctrl-btn {
@@ -1047,12 +1454,58 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
     margin: -50px 0 0 -50px;
   }
   .panel {
+    right: 0;
     width: calc(100vw - 24px);
-    max-width: 320px;
+    max-width: 360px;
     bottom: 78px;
     padding: 14px;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+  }
+  .player-body {
+    display: block;
+    min-height: 0;
+  }
+  .song-summary {
+    display: grid;
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 12px;
+    min-height: 68px;
+    padding: 0 0 10px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(33, 187, 255, 0.16);
+  }
+  .song-summary .art-frame {
+    width: 68px;
+    margin: 0;
+    padding: 2px;
+    border-radius: 7px;
+  }
+  .song-summary .art-wrap {
+    width: 64px;
+    height: 64px;
+  }
+  .song-summary .art {
+    border-radius: 5px;
+  }
+  .song-summary .meta {
+    padding-right: 0;
+    text-align: left;
+  }
+  .song-summary .meta-line {
+    margin-left: 0;
+  }
+  .content-pane {
+    height: min(190px, 26vh);
+    margin-top: 10px;
+  }
+  .transport {
+    display: block;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  .transport .controls {
+    margin-top: 8px;
   }
   .art-wrap {
     width: 92px;
@@ -1069,6 +1522,9 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   .t-thumb-wrap {
     width: 42px;
     height: 46px;
+  }
+  .lyric-line {
+    padding: 8px 6px;
   }
   .play-btn {
     width: 46px;
