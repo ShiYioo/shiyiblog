@@ -72,8 +72,11 @@ export default defineUserConfig({
     body: [
       {
         type: "text",
-        content:
-          "关于音乐播放器的问题，目前PC端无法点击播放按钮进行播放，切换歌曲可以进行播放，如需关闭可以调低播放器的音量，手机端一切正常（懒得改）",
+        content: `
+        <ul>
+          <li>国内站点：<a href="https://cn.blog.shiyio.uk/">https://cn.blog.shiyio.uk/</a></li>
+          <li>国际站点：<a href="https://blog.shiyio.uk/">https://blog.shiyio.uk/</a></li>
+        </ul>`,
         style: "font-size: 12px;",
       },
     ],
