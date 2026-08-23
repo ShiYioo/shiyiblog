@@ -302,6 +302,14 @@ watch(activeLyric, (idx) => {
 watch(view, (v) => {
   if (v === 'lyric') nextTick(() => scrollLyricTo(activeLyric.value, 'auto'))
 })
+// 面板关闭后 DOM 被销毁，重新展开时滚动位置已重置为顶部，
+// 需立即定位回当前行（此时 activeLyric 不变，watch 不会触发）
+watch(expanded, (v) => {
+  if (!v) return
+  clearTimeout(userScrollTimer)
+  lyricUserScrolling = false
+  if (view.value === 'lyric') nextTick(() => scrollLyricTo(activeLyric.value, 'auto'))
+})
 
 // 点击歌词行跳转播放进度
 function seekToLyric(time) {
