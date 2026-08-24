@@ -239,25 +239,25 @@ const goHome = () => {
   filter: drop-shadow(-18px 8px 20px rgba(35, 82, 118, 0.16));
 }
 
-:global(html.dark) .archive-not-found {
+:global(html.dark .archive-not-found) {
   background: #111d29;
 }
 
-:global(html.dark) .archive-not-found__grid {
+:global(html.dark .archive-not-found__grid) {
   opacity: 0.24;
 }
 
-:global(html.dark) .archive-not-found__panel {
+:global(html.dark .archive-not-found__panel) {
   border-color: rgba(33, 187, 255, 0.28);
   background: rgba(19, 32, 45, 0.88);
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.2);
 }
 
-:global(html.dark) .archive-not-found__title {
+:global(html.dark .archive-not-found__title) {
   color: #e3f1fb;
 }
 
-:global(html.dark) .archive-not-found__message {
+:global(html.dark .archive-not-found__message) {
   color: #a9bece;
 }
 
