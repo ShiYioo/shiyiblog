@@ -17,7 +17,7 @@
     </div>
 
     <!-- 收起态：旋转黑胶唱片 + BA 光环 -->
-    <div class="record-pod" @click="toggleExpand" title="点击展开">
+    <div class="record-pod" @click="toggleExpand" title="出击">
       <div class="ba-halo" :class="{ active: isPlaying }">
         <div class="halo-arc"></div>
         <div class="halo-ring"></div>
@@ -43,9 +43,9 @@
         <div class="panel-head">
           <div class="np-wrap">
             <span class="np-dot" :class="{ live: isPlaying }"></span>
-            <span class="now-playing">{{ isPlaying ? '再生中' : '一時停止' }}</span>
+            <span class="now-playing">{{ isPlaying ? '作战中' : '待机中' }}</span>
           </div>
-          <button class="collapse-btn" @click="expanded = false" title="收起">
+          <button class="collapse-btn" @click="expanded = false" title="撤退">
             ✕
           </button>
         </div>
@@ -72,10 +72,10 @@
           <div class="content-pane">
             <div class="view-tabs" role="tablist" aria-label="播放器视图">
               <button class="v-tab" :class="{ on: view === 'lyric' }" @click.stop="view = 'lyric'">
-                歌詞
+                通讯
               </button>
               <button class="v-tab" :class="{ on: view === 'list' }" @click.stop="view = 'list'">
-                トラック
+                作战
               </button>
               <span class="tl-count">{{
                 view === 'list' ? list.length : lyricLines.length
@@ -101,7 +101,7 @@
                   <p v-if="line.trans" class="l-trans">{{ line.trans }}</p>
                 </div>
               </template>
-              <div v-else class="lyric-empty">歌詞が見つかりませんでした ♪</div>
+              <div v-else class="lyric-empty">未截获通讯数据 ♪</div>
             </div>
 
             <ul class="tracklist" v-show="view === 'list'">
@@ -1399,50 +1399,6 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   transform: translateY(24px) scale(0.92);
 }
 
-/* ===== 暗色模式 ===== */
-:global(html.dark) .panel,
-:global(body.dark) .panel {
-  background: rgba(18, 28, 48, 0.85);
-  border-color: rgba(33, 187, 255, 0.22);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
-}
-:global(html.dark) .song-title,
-:global(body.dark) .song-title {
-  color: var(--ba-light);
-}
-:global(html.dark) .song-artist,
-:global(body.dark) .song-artist,
-:global(html.dark) .time,
-:global(body.dark) .time {
-  color: #6b7f94;
-}
-:global(html.dark) .t-title,
-:global(body.dark) .t-title {
-  color: #b8d4e8;
-}
-:global(html.dark) .l-text,
-:global(body.dark) .l-text {
-  color: #b8d4e8;
-}
-:global(html.dark) .l-trans,
-:global(body.dark) .l-trans,
-:global(html.dark) .lyric-empty,
-:global(body.dark) .lyric-empty {
-  color: #6b7f94;
-}
-:global(html.dark) .lyric-line.active .l-text,
-:global(body.dark) .lyric-line.active .l-text {
-  color: var(--ba-light);
-}
-:global(html.dark) .ctrl-btn,
-:global(body.dark) .ctrl-btn {
-  color: var(--ba-light);
-}
-:global(html.dark) .art-mood,
-:global(body.dark) .art-mood {
-  background: rgba(18, 28, 48, 0.95);
-}
-
 /* ===== 移动端：砍掉重特效 + 自适应宽度 + 放大触控区 ===== */
 @media (max-width: 768px) {
   .stardust-player {
@@ -1574,5 +1530,115 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   .particles {
     display: none;
   }
+}
+</style>
+
+<!-- 暗色模式放非 scoped 块：:global() 只能包裹完整选择器，
+     写成 :global(html.dark) .xxx 会在编译时丢弃 .xxx 部分，
+     导致规则变成只作用于 html 元素本身，永远无法命中面板 -->
+<style>
+html.dark .stardust-player .panel,
+body.dark .stardust-player .panel {
+  background: rgba(18, 28, 48, 0.85);
+  border-color: rgba(33, 187, 255, 0.22);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
+}
+html.dark .stardust-player .song-title,
+body.dark .stardust-player .song-title {
+  color: var(--ba-light);
+}
+html.dark .stardust-player .song-artist,
+body.dark .stardust-player .song-artist,
+html.dark .stardust-player .timeline,
+body.dark .stardust-player .timeline {
+  color: #6b7f94;
+}
+html.dark .stardust-player .view-tabs,
+body.dark .stardust-player .view-tabs {
+  background: rgba(33, 187, 255, 0.1);
+}
+html.dark .stardust-player .view-tabs .v-tab.on,
+body.dark .stardust-player .view-tabs .v-tab.on {
+  color: var(--ba-light);
+  background: rgba(33, 187, 255, 0.22);
+  box-shadow: 0 2px 7px rgba(33, 187, 255, 0.18);
+}
+html.dark .stardust-player .tl-count,
+body.dark .stardust-player .tl-count {
+  color: #6b7f94;
+}
+html.dark .stardust-player .collapse-btn,
+body.dark .stardust-player .collapse-btn {
+  color: var(--ba-light);
+}
+html.dark .stardust-player .now-playing,
+body.dark .stardust-player .now-playing {
+  color: var(--ba-light);
+}
+html.dark .stardust-player .progress-knob,
+body.dark .stardust-player .progress-knob {
+  background: #d8ecfa;
+}
+html.dark .stardust-player .lyrics-mode .lyrics,
+body.dark .stardust-player .lyrics-mode .lyrics {
+  border-color: rgba(33, 187, 255, 0.18);
+  background: rgba(33, 187, 255, 0.05);
+}
+html.dark .stardust-player .tracklist li:hover,
+body.dark .stardust-player .tracklist li:hover {
+  background: rgba(33, 187, 255, 0.1);
+}
+html.dark .stardust-player .tracklist li.active,
+body.dark .stardust-player .tracklist li.active {
+  background: linear-gradient(
+    90deg,
+    rgba(33, 187, 255, 0.22),
+    rgba(33, 187, 255, 0.05)
+  );
+  border-color: rgba(33, 187, 255, 0.35);
+}
+html.dark .stardust-player .lyric-line:hover,
+body.dark .stardust-player .lyric-line:hover {
+  background: rgba(33, 187, 255, 0.1);
+}
+html.dark .stardust-player .lyric-line.active,
+body.dark .stardust-player .lyric-line.active {
+  background: linear-gradient(
+    90deg,
+    rgba(33, 187, 255, 0.18),
+    rgba(33, 187, 255, 0.03)
+  );
+}
+html.dark .stardust-player .lyrics::-webkit-scrollbar-thumb,
+body.dark .stardust-player .lyrics::-webkit-scrollbar-thumb,
+html.dark .stardust-player .tracklist::-webkit-scrollbar-thumb,
+body.dark .stardust-player .tracklist::-webkit-scrollbar-thumb {
+  background: rgba(33, 187, 255, 0.25);
+}
+html.dark .stardust-player .t-title,
+body.dark .stardust-player .t-title {
+  color: #b8d4e8;
+}
+html.dark .stardust-player .l-text,
+body.dark .stardust-player .l-text {
+  color: #b8d4e8;
+}
+html.dark .stardust-player .l-trans,
+body.dark .stardust-player .l-trans,
+html.dark .stardust-player .lyric-empty,
+body.dark .stardust-player .lyric-empty {
+  color: #6b7f94;
+}
+html.dark .stardust-player .lyric-line.active .l-text,
+body.dark .stardust-player .lyric-line.active .l-text {
+  color: var(--ba-light);
+}
+html.dark .stardust-player .ctrl-btn,
+body.dark .stardust-player .ctrl-btn {
+  color: var(--ba-light);
+}
+html.dark .stardust-player .art-mood,
+body.dark .stardust-player .art-mood {
+  background: rgba(18, 28, 48, 0.95);
 }
 </style>
