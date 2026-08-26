@@ -660,3 +660,272 @@ html.dark .theme-reco-md-content > blockquote {
   border-color: rgba(33, 187, 255, 0.2);
 }
 
+/* ========== Algolia 搜索弹窗 · 蔚蓝档案主题 ========== */
+/* 遮罩：基沃托斯夜幕蓝 + 毛玻璃 */
+.DocSearch-Container {
+  background: rgba(6, 22, 44, 0.62) !important;
+  backdrop-filter: blur(6px);
+}
+
+/* 弹窗主体：海军蓝作战面板 + 青色描边光晕 + BA 斜切角 */
+.DocSearch-Modal {
+  background: linear-gradient(165deg, #0d2f57 0%, #0a2344 55%, #081c36 100%) !important;
+  border: 1px solid rgba(33, 187, 255, 0.5);
+  border-radius: 10px;
+  clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  box-shadow: 0 0 28px rgba(33, 187, 255, 0.28), 0 24px 48px rgba(0, 10, 25, 0.55) !important;
+}
+
+/* 顶部搜索条：通讯频道 */
+.DocSearch-Form {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(33, 187, 255, 0.35);
+  box-shadow: none !important;
+}
+.DocSearch-Form:focus-within {
+  background: rgba(33, 187, 255, 0.08) !important;
+  border-bottom-color: rgba(33, 187, 255, 0.8);
+}
+.DocSearch-MagnifierLabel svg {
+  color: #21bbff !important;
+}
+.DocSearch-Input {
+  color: #eaf6ff !important;
+}
+.DocSearch-Input::placeholder {
+  color: rgba(200, 230, 255, 0.4) !important;
+}
+.DocSearch-Reset svg,
+.DocSearch-Cancel {
+  color: #9fd9ff !important;
+}
+
+/* 结果分组标题：作战档案分区 */
+.DocSearch-Hit-source {
+  color: #4fd2ff !important;
+  background: linear-gradient(90deg, rgba(33, 187, 255, 0.22), rgba(33, 187, 255, 0)) !important;
+  border-left: 3px solid #21bbff;
+  font-weight: 600;
+}
+
+/* 结果条目 */
+.DocSearch-Hit {
+  border-bottom: 1px dashed rgba(33, 187, 255, 0.18);
+}
+.DocSearch-Hit-Container {
+  color: #d8ecff !important;
+}
+.DocSearch-Hit-Tree {
+  color: #2f7fb8 !important;
+}
+.DocSearch-Hit-Title {
+  color: #f2f9ff !important;
+}
+.DocSearch-Hit-Path {
+  color: #6fa8cf !important;
+}
+.DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-Container,
+.DocSearch-Hit a[aria-selected='true'] {
+  background: rgba(33, 187, 255, 0.15) !important;
+}
+
+/* 关键词高亮：青色荧光笔 */
+.DocSearch-Hit-highlight,
+.DocSearch-Hit-Title mark {
+  background: rgba(33, 187, 255, 0.35) !important;
+  color: #ffffff !important;
+}
+
+/* 底部信息栏 */
+.DocSearch-Footer {
+  background: rgba(5, 18, 36, 0.9) !important;
+  border-top: 1px solid rgba(33, 187, 255, 0.3) !important;
+}
+.DocSearch-Label,
+.DocSearch-Help {
+  color: #7fb8dd !important;
+}
+.DocSearch-Commands-Key {
+  background: #0e3a63 !important;
+  border: 1px solid rgba(33, 187, 255, 0.5) !important;
+  color: #a8e2ff !important;
+  box-shadow: none !important;
+}
+
+/* 起始屏 / 无结果 / 空态 */
+.DocSearch-StartScreen,
+.DocSearch-NoResults,
+.DocSearch-HitsFooter {
+  color: #6fa8cf;
+}
+
+/* 滚动条 */
+.DocSearch-Dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+.DocSearch-Dropdown::-webkit-scrollbar-thumb {
+  background: rgba(33, 187, 255, 0.35);
+  border-radius: 4px;
+}
+.DocSearch-Dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 导航栏搜索按钮：BA 胶囊徽章 */
+.DocSearch-Button {
+  background: rgba(13, 47, 87, 0.55) !important;
+  border: 1px solid rgba(33, 187, 255, 0.45);
+  border-radius: 999px;
+  box-shadow: 0 0 0 rgba(33, 187, 255, 0);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+.DocSearch-Button:hover {
+  border-color: #21bbff;
+  box-shadow: 0 0 12px rgba(33, 187, 255, 0.45);
+}
+.DocSearch-Button-Container svg {
+  color: #21bbff !important;
+}
+.DocSearch-Button-Placeholder {
+  color: #bfe6ff !important;
+}
+.DocSearch-Button-Key,
+.DocSearch-Button-Key svg {
+  color: #7fc8f0 !important;
+  background: transparent !important;
+}
+
+/* 暗色模式下按钮底色加深 */
+html.dark .DocSearch-Button {
+  background: rgba(8, 26, 48, 0.7) !important;
+}
+
+/* 移动端全屏弹窗取消斜切角，避免内容被裁 */
+@media (max-width: 767px) {
+  .DocSearch-Modal {
+    clip-path: none;
+  }
+}
+
+/* ========== 搜索界面二次优化：BA 战术终端 ========== */
+.DocSearch-Container {
+  background: rgba(12, 36, 66, 0.42) !important;
+  backdrop-filter: blur(8px);
+}
+.DocSearch-Modal {
+  width: min(720px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 48px));
+  margin: 24px auto;
+  overflow: hidden;
+  background: #f8fbff !important;
+  border: 1px solid #9adcf7;
+  border-radius: 8px;
+  clip-path: none;
+  box-shadow: 0 20px 56px rgba(13, 47, 87, .28), 0 0 0 4px rgba(33, 187, 255, .08) !important;
+}
+.DocSearch-Modal::before { content: ''; display: block; height: 4px; background: #21bbff; }
+.DocSearch-SearchBar { position: relative; padding: 30px 20px 14px !important; background: #eef8ff !important; border-bottom: 1px solid #c9eaf8 !important; }
+.DocSearch-SearchBar::before { content: 'TACTICAL DATABASE  //  SEARCH'; position: absolute; top: 10px; left: 20px; color: #4b91ad; font-size: 10px; font-weight: 700; letter-spacing: .12em; }
+.DocSearch-SearchBar::after { content: 'ONLINE'; position: absolute; top: 9px; right: 20px; padding: 2px 6px; color: #087eaf; background: #d8f5ff; border: 1px solid #9adcf7; border-radius: 3px; font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+.DocSearch-Form { min-height: 52px; background: #fff !important; border: 1px solid #a8dff5 !important; border-radius: 6px !important; box-shadow: 0 3px 12px rgba(17, 87, 126, .08) !important; }
+.DocSearch-Form:focus-within { border-color: #21bbff !important; box-shadow: 0 0 0 3px rgba(33, 187, 255, .16) !important; }
+.DocSearch-MagnifierLabel svg, .DocSearch-Reset svg { color: #087eaf !important; }
+.DocSearch-Input { color: #12345a !important; font-size: 16px !important; }
+.DocSearch-Input::placeholder { color: #7794aa !important; }
+.DocSearch-Cancel { color: #087eaf !important; font-weight: 600; }
+.DocSearch-Dropdown { background: #f8fbff !important; padding: 8px 12px 14px !important; }
+.DocSearch-Hit-source { margin: 8px 4px 4px !important; padding: 7px 10px !important; color: #087eaf !important; background: #e3f6ff !important; border-left: 3px solid #21bbff; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.DocSearch-Hit { border-bottom: 1px solid #e5f1f7; }
+.DocSearch-Hit a { position: relative; border-radius: 5px; transition: background .16s ease, transform .16s ease; }
+.DocSearch-Hit a:hover { background: #edfaff !important; transform: translateX(2px); }
+.DocSearch-Hit-Container { color: #244667 !important; }
+.DocSearch-Hit-Title { color: #12345a !important; font-weight: 650; }
+.DocSearch-Hit-Path { color: #6d879d !important; }
+.DocSearch-Hit[aria-selected='true'] a { background: #d9f4ff !important; box-shadow: inset 3px 0 #21bbff, 0 2px 8px rgba(33, 187, 255, .12); }
+.DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-Title { color: #056a96 !important; }
+.DocSearch-Hit-highlight, .DocSearch-Hit-Title mark { background: #fff0a8 !important; color: #12345a !important; padding: 0 2px; }
+.DocSearch-Footer { background: #edf7fc !important; border-top: 1px solid #c9eaf8 !important; }
+.DocSearch-Label, .DocSearch-Help { color: #66839a !important; }
+.DocSearch-Commands-Key { background: #fff !important; border: 1px solid #b5d9e9 !important; color: #176487 !important; box-shadow: 0 1px 2px rgba(13, 47, 87, .12) !important; }
+.DocSearch-StartScreen, .DocSearch-NoResults, .DocSearch-HitsFooter { color: #66839a !important; }
+.DocSearch-Dropdown::-webkit-scrollbar { width: 7px; }
+.DocSearch-Dropdown::-webkit-scrollbar-thumb { background: #7ed8f5; border-radius: 4px; }
+.DocSearch-Dropdown::-webkit-scrollbar-track { background: #eaf6fb; }
+.DocSearch-Button { background: #fff !important; border: 1px solid #c5dce8 !important; border-radius: 6px !important; box-shadow: 0 2px 8px rgba(13, 47, 87, .08) !important; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.DocSearch-Button:hover { border-color: #21bbff !important; box-shadow: 0 4px 14px rgba(33, 187, 255, .2) !important; transform: translateY(-1px); }
+.DocSearch-Button-Container svg { color: #087eaf !important; }
+.DocSearch-Button-Placeholder { color: #58758c !important; }
+.DocSearch-Button-Key { color: #58758c !important; background: #f2f8fb !important; border: 1px solid #c5dce8 !important; }
+html.dark .DocSearch-Modal { background: #102b48 !important; border-color: #2f9bc8; }
+html.dark .DocSearch-SearchBar, html.dark .DocSearch-Footer { background: #0d243d !important; border-color: #244e6b !important; }
+html.dark .DocSearch-Dropdown { background: #102b48 !important; }
+html.dark .DocSearch-Form { background: #173756 !important; border-color: #397da3 !important; }
+html.dark .DocSearch-Input, html.dark .DocSearch-Hit-Title { color: #e5f6ff !important; }
+html.dark .DocSearch-Hit-Path, html.dark .DocSearch-Label, html.dark .DocSearch-Help { color: #91b7ca !important; }
+html.dark .DocSearch-Hit { border-color: #244e6b; }
+html.dark .DocSearch-Hit[aria-selected='true'] a { background: #164967 !important; }
+html.dark .DocSearch-Hit-source { background: #123b55 !important; }
+@media (max-width: 767px) {
+  .DocSearch-Modal { width: 100%; max-height: 100%; margin: 0; border-radius: 0; }
+  .DocSearch-SearchBar { padding: 30px 12px 10px !important; }
+  .DocSearch-SearchBar::before { left: 12px; }
+  .DocSearch-SearchBar::after { right: 12px; }
+  .DocSearch-Dropdown { padding: 6px 8px 10px !important; }
+}
+
+/* 导航栏入口：与背景融合的玻璃按钮 */
+.navbar-container .DocSearch-Button,
+.header-wrapper .DocSearch-Button {
+  min-height: 32px;
+  background: rgba(255, 255, 255, .16) !important;
+  border: 1px solid rgba(255, 255, 255, .42) !important;
+  border-radius: 7px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 3px 10px rgba(8, 46, 76, .12) !important;
+  backdrop-filter: blur(10px);
+  transform: none;
+}
+.navbar-container .DocSearch-Button:hover,
+.header-wrapper .DocSearch-Button:hover {
+  background: rgba(255, 255, 255, .24) !important;
+  border-color: rgba(255, 255, 255, .72) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 4px 14px rgba(8, 46, 76, .18) !important;
+  transform: none;
+}
+.navbar-container .DocSearch-Button-Container svg,
+.header-wrapper .DocSearch-Button-Container svg { color: #e9f9ff !important; }
+.navbar-container .DocSearch-Button-Placeholder,
+.header-wrapper .DocSearch-Button-Placeholder { color: rgba(240, 250, 255, .88) !important; }
+.navbar-container .DocSearch-Button-Key,
+.header-wrapper .DocSearch-Button-Key {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, .17) !important;
+  border: 1px solid rgba(255, 255, 255, .38) !important;
+  border-radius: 4px !important;
+  color: rgba(241, 251, 255, .92) !important;
+  box-shadow: none !important;
+}
+.navbar-container.has-border .DocSearch-Button,
+.header-wrapper.has-border .DocSearch-Button {
+  background: rgba(255, 255, 255, .96) !important;
+  border-color: #c5dce8 !important;
+  box-shadow: 0 2px 8px rgba(13, 47, 87, .08) !important;
+}
+.navbar-container.has-border .DocSearch-Button:hover,
+.header-wrapper.has-border .DocSearch-Button:hover {
+  background: #fff !important;
+  border-color: #21bbff !important;
+  box-shadow: 0 4px 14px rgba(33, 187, 255, .2) !important;
+}
+.navbar-container.has-border .DocSearch-Button-Container svg,
+.header-wrapper.has-border .DocSearch-Button-Container svg { color: #087eaf !important; }
+.navbar-container.has-border .DocSearch-Button-Placeholder,
+.header-wrapper.has-border .DocSearch-Button-Placeholder { color: #58758c !important; }
+.navbar-container.has-border .DocSearch-Button-Key,
+.header-wrapper.has-border .DocSearch-Button-Key {
+  background: #f2f8fb !important;
+  border-color: #c5dce8 !important;
+  color: #58758c !important;
+}
+
