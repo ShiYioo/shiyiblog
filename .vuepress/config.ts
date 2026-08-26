@@ -24,7 +24,7 @@ export default defineUserConfig({
       // triggerLength: 1,
     }),
     sitemapPlugin({
-      hostname: 'blog.shiyio.uk'
+      hostname: 'https://blog.shiyio.uk'
     }),
   ],
   port: 8012,
@@ -61,11 +61,9 @@ export default defineUserConfig({
       { text: "档案", link: "/docs/other/welcome" },
     ],
     algolia: {
-    appId: '9ebbabab-4b36-4711-ac94-f677bcf9b647',
-    apiKey: '0bd9f9ba1d74a028e9041408426f9b9c',
+    appId: '5C9JLSG2VN',
+    apiKey: 'f8973ac28f759d8eaa021f1d869c8d93',
     indexName: 'ShiYi Blog',
-    inputSelector: '### REPLACE ME ####',
-    algoliaOptions: { 'facetFilters': ["lang:$LANG"] },
     debug: false // Set debug to true if you want to inspect the dropdown
   },
   bulletin: {

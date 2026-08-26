@@ -18,6 +18,7 @@ const SCRAPERS = [
 
 export default async (request, context) => {
   const ua = (request.headers.get('user-agent') || '').toLowerCase();
+  if (ua.includes('algolia')) return context.next();
   if (!ua || SCRAPERS.some((s) => ua.includes(s))) {
     return new Response('Forbidden', { status: 403 });
   }
