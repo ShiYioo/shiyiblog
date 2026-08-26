@@ -3,6 +3,8 @@
 import { h, createApp, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineClientConfig } from '@vuepress/client'
+import { h as hPreact } from 'preact'
+import { defineDocSearchConfig } from '@vuepress/plugin-docsearch/client'
 import ReadTime from './components/ReadTime.vue'
 import ArchiveCursor from './components/ArchiveCursor.vue'
 import ArchiveAmbient from './components/ArchiveAmbient.vue'
@@ -97,7 +99,25 @@ export default defineClientConfig({
   layouts: {
     NotFound,
   },
-  enhance({ app }) {
+  enhance({ app, router }) {
+    // @vuepress/plugin-docsearch rc.55 的 hitComponent 返回裸对象假 vnode，
+    // 在 @docsearch/js 3.9 的 preact 渲染器下不渲染（结果项成空壳 <li>，无链接可点）。
+    // 这里用真 preact h() 重写并覆盖，恢复结果项的 <a> 与点击跳转。
+    defineDocSearchConfig({
+      hitComponent: ({ hit, children }: any) =>
+        hPreact(
+          'a',
+          {
+            href: hit.url,
+            onClick: (event: any) => {
+              if (event.button === 1 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+              event.preventDefault()
+              router.push(hit.url)
+            },
+          },
+          children
+        ),
+    })
   },
   setup() {
     const router = useRouter()
