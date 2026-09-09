@@ -258,7 +258,7 @@ export default defineClientConfig({
       ensureMagicCard()
     }
 
-    router.afterEach((to) => {
+    router.afterEach((to, from) => {
       if (typeof window === 'undefined') return
       if (!isMobile && to.path.startsWith('/blogs/')) {
         mountReadTimeComponent()
@@ -274,7 +274,9 @@ export default defineClientConfig({
 
       ensureMagicCard()
 
-      if (oml2dInstance) {
+      // 纯锚点跳转（点目录/标题下滑）不重挂页面DOM，跳过reload避免看板娘消失再出现
+      const isAnchorJump = to.path === from.path && to.hash !== from.hash
+      if (oml2dInstance && !isAnchorJump) {
         setTimeout(() => { try { oml2dInstance?.reloadModel() } catch (e) {} }, 600)
       }
     })
